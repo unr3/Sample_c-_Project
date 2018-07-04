@@ -1,0 +1,339 @@
+﻿
+@{
+    ViewBag.Title = "Technical Department Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="ibox wrapper wrapper-content animated fadeInRight white-bg page-heading" > 
+
+    <div class="ibox">
+
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h2>Technical Department</h2>
+            </div>
+
+            <div class="ibox-content">
+                <div class="form-group">
+                    <div class="col-sm-12">
+                        <div class="col-sm-12">
+                            <div class="col-sm-3">
+                                <select id="vessels" data-placeholder="Choose a Vessel..." class="chosen-select" tabindex="1"></select>
+                            </div>
+
+                            <div class="col-sm-2">
+                                <select id="files" data-placeholder="Choose a File..." class="chosen-select" tabindex="2"></select>
+                            </div>
+                            <div class="col-sm-2">
+                                <select id="referances" data-placeholder="Choose a Referance..." class="chosen-select" tabindex="3"></select>
+                            </div>
+                            <div class="col-sm-2">
+                                @Html.ActionLink("Select", "ViewRfq", null, new { @class = "btn btn-primary disabled", id = "selectlink" })
+                            </div>
+                            <div class="col-sm-3">
+                                &nbsp;
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12">
+                            <div class="col-sm-5">
+                                &nbsp;
+                            </div>
+                            <div class="col-sm-2">
+                                <br />
+                                <a data-toggle="modal" class="btn btn-primary disabled" href="#modal-form" id="addrfq" tabindex="5" style="width: 100%">Add New Referance</a>
+                            </div>
+                            <div class="col-sm-5">
+                                &nbsp;
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+                    <div id="modal-form" class="modal fade" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-body">
+                                    <div class="row">
+
+                                        <div class="col-sm-6">
+                                            <h4>Technical Department</h4>
+                                            <p>You can add a new Referance:</p>
+                                            <p class="text-center">
+                                                <a href=""><i class="fa fa-plus big-icon"></i></a>
+                                            </p>
+                                        </div>
+                                        <div class="col-sm-6 b-r">
+                                            <h3 class="m-t-none m-b">New Referance</h3>
+                                            @using (Html.BeginForm("AddNewRfq", "Technical", FormMethod.Post))
+                                        {
+                                            <form role="form">
+                                                <div class="form-group">
+                                                    <input type="hidden" name="FileId" id="FileId" />
+                                                    <input type="text" placeholder="Referance Nr." class="form-control" id="RfqName" name="RfqName">
+                                                </div>
+                                                <div>
+                                                    <br />
+                                                    <button class="btn btn-lg btn-primary pull-right m-t-n-xs" type="submit"><strong>Add</strong></button>
+                                                </div>
+                                            </form>
+                                    }
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <br />
+
+                    <div class="row" style="margin-top:30px; background-color:white">
+
+
+                        <div class="col-md-6">
+                            <table id="example" class="table table-striped" width="100%"></table>
+                        </div>
+                        <div class="col-md-6 hidden" id="divbuttons" style="margin-top: 25px;"> 
+                            <div class="col-md-6" style="margin-top:20px">
+                                <button class="btn  btn-block btn-info demo3" id="1" onClick="move(this.id);return false"> Move To Writing Page</button>
+                                <br />
+                                <button class="btn  btn-block btn-success demo3" id="4" onClick="move(this.id);return false"> Move To Pricing Page</button>
+                                <br />
+                                <button class="btn  btn-block btn-warning demo3" id="5" onClick="move(this.id);return false"> Move To Sale Page</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+ 
+
+
+ 
+
+
+
+
+
+
+
+@section Styles {
+    @Styles.Render("~/Content/plugins/chosen/chosenStyles")
+    @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
+}
+
+
+@section Scripts {
+    @Scripts.Render("~/plugins/chosen")
+    @Scripts.Render("~/plugins/dataTables")
+
+<script type="text/javascript">
+        $('.chosen-select').chosen({ width: "100%" });
+        $(document).ready(function() {
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GetVessels")',
+                dataType: 'json',
+                data: {},
+                success: function(vessels) {
+                    $.each(vessels,
+                        function(i, vessel) {
+                            $("#vessels").append(new Option(vessel.Text, vessel.Value));
+
+                        });
+                    $('#vessels').trigger("chosen:updated");
+                },
+                error: function(ex) {
+                    alert('Failed to retrieve Vessels.' + ex);
+                }
+            });
+            return false;
+        });
+
+        $("#vessels").change(function() {
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GetFilesbyVesselId")',
+                dataType: 'json',
+                data: { VesselId: $("#vessels").val() },
+                success: function(files) {
+                    $("#files").empty();
+                    $("#referances").empty();
+                    document.getElementById("selectlink").classList.add('disabled');
+                    document.getElementById("addrfq").classList.add('disabled');
+                    $.each(files,
+                        function(i, file) {
+                            $("#files").append(new Option(file.Text, file.Value));
+
+                        });
+                    $('#files').trigger("chosen:updated");
+                    $('#referances').trigger("chosen:updated");
+                },
+                error: function(ex) {
+                    alert('Failed to retrieve Files.' + ex);
+                }
+            });
+            return false;
+
+        });
+
+        var dataSet = [];
+        $("#files").change(function() {
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GetRfqsbyFileId")',
+                dataType: 'json',
+                data: { FileId: $("#files").val() },
+                success: function(referances) {
+                    $("#referances").empty();
+                    document.getElementById("selectlink").classList.add('disabled');
+                    if ($("#files").val()!=="0") {
+                        document.getElementById("addrfq").classList.remove('disabled');
+                    }
+                    document.getElementById("FileId").value = $("#files").val();
+
+                    $.each(referances,
+                        function (i, referance) {
+                            $("#referances").append(new Option(referance.Text, referance.Value));  //new Option(referance.Text, referance.Value)
+
+                        });
+                    $('#referances').trigger("chosen:updated");
+
+                 //table için gerekli değerler
+              $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GetRfqsDetailbyFileId")',
+                dataType: 'json',
+                data: { FileId: $("#files").val()},
+                success: function (rfqs) {
+                    console.log('rfqdetailfileid =' + $("#files").val());
+                    dataSet = [];
+                    $.each(rfqs,
+                        function (i, rfq) {
+                            console.log(rfq);
+                            var dts = [rfq.RfqName, rfq.Stage, rfq.Count, rfq.RfqId];
+                            dataSet.push(dts);
+
+                        });
+
+
+                    $('#example').DataTable({
+                        select: {
+                            style: 'multi'
+                        },
+                        data: dataSet,
+                        columns: [
+                            { title: "RFQ Name" },
+                            { title: "Stage" },
+                            { title: "Item Count" },
+                            { title: "Id" }
+                        ],
+                        paging: false,
+                        searching: false,
+                        destroy: true,
+
+                    });
+
+                    document.getElementById("divbuttons").classList.remove('hidden');
+
+
+                },
+                error: function(ex) {
+                    alert('Failed to retrieve RfqDetails.' + ex);
+                }
+            });
+
+
+                },
+                error: function(ex) {
+                    alert('Failed to retrieve Referances.' + ex);
+                }
+            });
+            return false;
+
+        });
+
+        var url = $('#selectlink').attr('href');
+
+        $("#referances").change(function() {
+            var refval = $("#referances").val();
+            var sel = document.getElementById("referances");
+            if (refval !== 0) {
+                document.getElementById("selectlink").classList.remove('disabled');
+                document.getElementById("addrfq").classList.remove('disabled');
+                $('#selectlink').attr('href', url + '/' + refval );
+               //+ sel.options[sel.selectedIndex].text
+            }
+            if(refval==='0')    {
+                alert(refval);
+                document.getElementById("selectlink").classList.add('disabled');
+                document.getElementById("addrfq").classList.add('disabled');
+            }
+
+        });
+
+
+        function SaveRFQ() {
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("AddNewRfq")',
+                data: JSON.stringify({ FileId: $("#files").val(), RfqName: $("#newrfq").text }),
+                success: function(referances) {
+                    $("#referances").empty();
+                    document.getElementById("selectlink").classList.add('disabled');
+                    document.getElementById("addrfq").classList.add('disabled');
+                    $.each(referances,
+                        function(i, referance) {
+                            $("#referances").append(new Option(referance.Text, referance.Value));
+
+                        });
+                    $('#referances').trigger("chosen:updated");
+                },
+                error: function(ex) {
+                    alert('Failed to add New Rfq'+ ex);
+                }
+            });
+
+
+        }
+
+        function move(clicked_id) {
+
+            var table = $('#example').DataTable();
+
+            var ids = $.map(table.rows('.selected').data(),
+                function (item) {
+                    return item[3];
+                });
+
+                    $.ajax({
+                type: "POST",
+                url: '@Url.Action("MoveRfqs")',
+                data: { 'rfqids': ids, 'stageid': clicked_id },
+                dataType: "json",
+                traditional: true,
+                success: function(data) {
+                    window.location.href = data;
+                }
+            });
+        }
+
+</script>
+}
+
+
+

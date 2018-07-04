@@ -1,0 +1,500 @@
+﻿@using Appa_MVC.Models
+@using Appa_MVC.Controllers
+
+@model Appa_MVC.Models.LineItemPricingEditViewModel
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+        <h2>Edit</h2>
+        <ol class="breadcrumb">
+            <li>
+                @Html.ActionLink("Back To List", "Index", new { id = Model.File.Id })
+            </li>
+            <li class="active">
+                <strong>Edit</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-sm-8">
+        <div class="title-action">
+            @Html.ActionLink("Back to List", "Index", new { id = Model.File.Id }, new { @class = "btn btn-primary" })
+        </div>
+    </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>
+                        Edit Item from  <strong> @Model.LineItem.ReferanceNumber.Name</strong>  Selected Currency is <strong>
+                            @{
+                                if (Model.File.Currency != null)
+                                {
+                                    int curid = Model.File.Currency ?? default(int);
+                                    CurrencyList.Currencies curr = (CurrencyList.Currencies)curid;
+
+                                    <strong>@curr.ToString()</strong>
+                                }
+
+                            }
+                        </strong>
+                    </h5>
+                </div>
+                <div class="ibox-content">
+
+                    @using (Html.BeginForm())
+                    {
+                        @Html.AntiForgeryToken()
+
+                        <div class="form-horizontal">
+                            @Html.ValidationSummary(true)
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.LineItem.Number, new { @class = "control-label col-md-2" })
+                                <div class="col-md-10">
+                                    @Html.EditorFor(model => model.LineItem.Number)
+                                    @Html.ValidationMessageFor(model => model.LineItem.Number)
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.LineItem.Impa, new { @class = "control-label col-md-2" })
+                                <div class="col-md-10">
+                                    @Html.EditorFor(model => model.LineItem.Impa)
+                                    @Html.ValidationMessageFor(model => model.LineItem.Impa)
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.LineItem.Description, new { @class = "control-label col-md-2" })
+                                <div class="col-md-10">
+                                    @Html.EditorFor(model => model.LineItem.Description)
+                                    @Html.ValidationMessageFor(model => model.LineItem.Description)
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.LineItem.Unit, new { @class = "control-label col-md-2" })
+                                <div class="col-md-10">
+                                    @Html.EditorFor(model => model.LineItem.Unit)
+                                    @Html.ValidationMessageFor(model => model.LineItem.Unit)
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.LineItem.Qtty, new { @class = "control-label col-md-2" })
+                                <div class="col-md-10">
+                                    @Html.EditorFor(model => model.LineItem.Qtty)
+                                    @Html.ValidationMessageFor(model => model.LineItem.Qtty)
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.LineItem.Price, new { @class = "control-label col-md-2" })
+                                <div class="col-md-10">
+                                    @Html.EditorFor(model => model.LineItem.Price)
+                                    @Html.ValidationMessageFor(model => model.LineItem.Price)
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.LineItem.AltUnit, new { @class = "control-label col-md-2" })
+                                <div class="col-md-10">
+                                    @Html.EditorFor(model => model.LineItem.AltUnit)
+                                    @Html.ValidationMessageFor(model => model.LineItem.AltUnit)
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.LineItem.AltQtty, new { @class = "control-label col-md-2" })
+                                <div class="col-md-10">
+                                    @Html.EditorFor(model => model.LineItem.AltQtty)
+                                    @Html.ValidationMessageFor(model => model.LineItem.AltQtty)
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.LineItem.AltPrice, new { @class = "control-label col-md-2" })
+                                <div class="col-md-10">
+                                    @Html.EditorFor(model => model.LineItem.AltPrice)
+                                    @Html.ValidationMessageFor(model => model.LineItem.AltPrice)
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.LineItem.Remark, new { @class = "control-label col-md-2" })
+                                <div class="col-md-10">
+                                    @Html.EditorFor(model => model.LineItem.Remark)
+                                    @Html.ValidationMessageFor(model => model.LineItem.Remark)
+                                </div>
+                                @Html.HiddenFor(model => model.LineItem.Id)
+                                @Html.HiddenFor(model => model.LineItem.ReferanceNumber.FileId)
+
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.LineItem.SelectedSupplierName, new { @class = "control-label col-md-2", disabled = "disabled" })
+                                <div class="col-md-10">
+                                    @Html.TextBoxFor(model => model.LineItem.SelectedSupplierName, new { @class = "form-control", disabled = "disabled" })
+                                    @Html.ValidationMessageFor(model => model.LineItem.SelectedSupplierName)
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.LineItem.SelectedSupplierPrice, new { @class = "control-label col-md-2", disabled = "disabled" })
+                                <div class="col-md-10">
+                                    @Html.TextBoxFor(model => model.LineItem.SelectedSupplierPrice, new { @class = "form-control", disabled = "disabled" })
+                                    @Html.ValidationMessageFor(model => model.LineItem.SelectedSupplierPrice)
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.LineItem.SelectedSupplierCurrency, new { @class = "control-label col-md-2", disabled = "disabled" })
+                                <div class="col-md-10">
+                                    @Html.TextBoxFor(model => model.LineItem.SelectedSupplierCurrency, new { @class = "form-control", disabled = "disabled" })
+                                    @Html.ValidationMessageFor(model => model.LineItem.SelectedSupplierCurrency)
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.LineItem.SelectedSupplierRemark, new { @class = "control-label col-md-2", disabled = "disabled" })
+                                <div class="col-md-10">
+                                    @Html.TextBoxFor(model => model.LineItem.SelectedSupplierRemark, new { @class = "form-control", disabled = "disabled" })
+                                    @Html.ValidationMessageFor(model => model.LineItem.SelectedSupplierRemark)
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-offset-2 col-md-10">
+                                    <div class="pull-right">
+                                        <input type="submit" value="Edit" class="btn btn-warning demo2" />
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-sm-6">
+
+
+
+
+            <h3 class="text-center">Warehouse Data</h3>
+            <table class="table table-striped dataTables-example">
+                <thead>
+                    <tr>
+                        <th>Warehouse Name</th>
+                        <th>
+                            @{
+                                if (Model.File.Currency != null)
+                                {
+                                    int curid = Model.File.Currency ?? default(int);
+                                    CurrencyList.Currencies curr = (CurrencyList.Currencies)curid;
+
+                                    <strong>@curr.ToString()</strong>
+                                }
+
+
+                            }  Cost
+                        </th>
+                        <th>Qtty</th>
+                        <th class="pull-right">Select</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td> Antrepo(Izmir)</td>
+                        <td>@Html.Action("GetPriceByWarehouseAndImpa", new { warehouse = "4", impa = Model.LineItem.Impa, fileid = Model.File.Id })</td>
+                        <td>@Html.Action("GetQttyByWarehouseAndImpa", new { warehouse = "4", impa = Model.LineItem.Impa })</td>
+                        <td class="pull-right">@Html.ActionLink("Select", "SelectWarehouse", new { warehouse = "4", lineitemid = Model.LineItem.Id, fileid = Model.File.Id }, new { @class = "btn btn-sm btn-warning" })</td>
+                    </tr>
+                    <tr>
+                        <td> Izmir Warehouse</td>
+                        <td>@Html.Action("GetPriceByWarehouseAndImpa", new { warehouse = "2", impa = Model.LineItem.Impa, fileid = Model.File.Id })</td>
+                        <td>@Html.Action("GetQttyByWarehouseAndImpa", new { warehouse = "2", impa = Model.LineItem.Impa })</td>
+                        <td class="pull-right">@Html.ActionLink("Select", "SelectWarehouse", new { warehouse = "2", lineitemid = Model.LineItem.Id, fileid = Model.File.Id }, new { @class = "btn btn-sm btn-warning" })</td>
+                    </tr>
+                    <tr>
+                        <td> Istanbul Warehouse</td>
+                        <td>@Html.Action("GetPriceByWarehouseAndImpa", new { warehouse = "5", impa = Model.LineItem.Impa, fileid = Model.File.Id })</td>
+                        <td>@Html.Action("GetQttyByWarehouseAndImpa", new { warehouse = "5", impa = Model.LineItem.Impa })</td>
+                        <td class="pull-right">@Html.ActionLink("Select", "SelectWarehouse", new { warehouse = "5", lineitemid = Model.LineItem.Id, fileid = Model.File.Id }, new { @class = "btn btn-sm btn-warning" })</td>
+                    </tr>
+                </tbody>
+
+            </table>
+
+            <div class="col-md-12">
+                <div class="col-md-6">
+                    <a data-toggle="modal" class="btn btn-info" href="#modal-form" id="addnewsupplierprice" tabindex="5" style="width: 100%">Add New Supplier Price</a>
+                </div>
+                <div class="col-md-6">
+                    @Html.ActionLink("Clear Supplier", "ClearSupplier", new { lineitemid = Model.LineItem.Id, fileid = Model.File.Id }, new { @class = "btn btn-block btn-warning" })
+                </div>
+
+            </div>
+           
+
+            <br />
+
+            <div class="col-md-12" style="margin-top:20px">
+                <h3 class="text-center">Supplier Data</h3>
+                <br />
+            
+                <br />
+                <table class="table table-striped dataTables-example">
+                    <thead>
+                        <tr>
+                            <th>Supplier</th>
+                            <th>Calculated Price</th>
+                            <th>Price</th>
+                            <th>Currency</th>
+                            <th>Vat</th>
+                            <th>Comment</th>
+                            <th>Update Date</th>
+                            <th class="pull-right">Select</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.LineItemSuppliers)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.SupplierName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.RealPrice)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.SupplierPrice)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Currency)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Vat)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Comment)
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UpdateDate)
+                    </td>
+
+                    <td class="pull-right">
+
+                        @Html.ActionLink("Select", "SelectSupplier", new { id = item.Id, lineitemid = Model.LineItem.Id, fileid = Model.File.Id }, new { @class = "btn btn-sm btn-danger" })
+                    </td>
+                </tr>
+}
+                    </tbody>
+
+                    <tfoot>
+                        <tr>
+                            <td colspan="2">
+                                <ul class="pagination pull-right"></ul>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+
+        </div>
+    </div>
+
+
+
+    <div id="modal-form" class="modal fade" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="row">
+                        @*'@Model.File.Id','@Model.LineItem.Id', '@Model.LineItem.Impa'*@
+                        <div class="col-sm-6">
+                            <h4>Technical Department</h4>
+                            <p>You can add a new Price For The Fallowing Item:</p>
+                            @Html.Hidden("fileid", Model.File.Id)
+                            @Html.Hidden("lineitemid", Model.LineItem.Id)
+                            @Html.Hidden("lineitemimpa", Model.LineItem.Impa)
+                            <p class="text-center">
+                                @Model.LineItem.Impa
+                                <br />
+                                @Model.LineItem.Description
+                            </p>
+                        </div>
+                        <div class="col-sm-6 b-r">
+                            <h3 class="m-t-none m-b">New Supplier Price</h3>
+                            <form role="form">
+                                <div class="form-group">
+                                    <select id="suppliers" data-placeholder="Choose a Supplier..." class="chosen-select" tabindex="1"></select>
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" placeholder="Price" class="form-control" id="price" name="price" tabindex="2" required>
+                                </div>
+                                <div class="form-group">
+                                    <select id="vat" data-placeholder="Vat" class="chosen-select" tabindex="3" name="vat" required>
+                                        <option value="">Please Choose</option>
+                                        <option>1</option>
+                                        <option>8</option>
+                                        <option>12</option>
+                                        <option>18</option>
+
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <select id="currency" data-placeholder="Currency" class="chosen-select" tabindex="4" name="currency" required>
+                                        <option value="">Please Choose</option>
+                                        <option>TL</option>
+                                        <option>USD</option>
+                                        <option>EURO</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" placeholder="Remark" class="form-control" id="remark" name="remark" tabindex="5">
+                                </div>
+
+
+                                <div>
+                                    <br />
+
+                                    <button class="btn btn-lg btn-primary pull-right m-t-n-xs demo3" onClick="save_supplier();return false">Add</button>
+                                </div>
+                            </form>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Styles {
+    @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
+    @Styles.Render("~/Content/plugins/chosen/chosenStyles")
+    @Styles.Render("~/plugins/sweetAlertStyles")
+}
+
+
+
+@section Scripts {
+
+    @Scripts.Render("~/plugins/dataTables")
+    @Scripts.Render("~/plugins/chosen")
+    @Scripts.Render("~/plugins/sweetAlert")
+
+
+    <script type="text/javascript">
+
+         $('.chosen-select').chosen({ width: "100%" });
+         $(document).ready(function () {
+
+            $('.dataTables-example').DataTable({
+                select: {
+                    style: 'single'
+                },
+                pageLength: 10,
+                dom: '<"html5buttons"B>lTfgitp',
+                buttons: [
+                ]
+
+            });
+
+
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GetAllSuppliers")',
+                dataType: 'json',
+                data: {},
+                success: function (suppliers) {
+                    $.each(suppliers,
+                        function (i, supplier) {
+                            $("#suppliers").append(new Option(supplier.Text, supplier.Value));
+
+                        });
+                    $('#suppliers').trigger("chosen:updated");
+                },
+                error: function(ex) {
+                    alert('Failed to retrieve Suppliers.' + ex);
+                }
+            });
+            return false;
+        });
+
+        function save_supplier()
+        {
+            $('#modal-form').modal('hide');
+
+            var fileid = document.getElementById("fileid").value;
+            var lineitemid = document.getElementById("lineitemid").value;
+
+            console.log(fileid);
+
+            console.log(lineitemid);
+            console.log($("#suppliers").text);
+
+
+            var lineitemimpa = document.getElementById("lineitemimpa").value;
+            var supplierid = $("#suppliers").val();
+            var price = document.getElementById("price").value;
+            var currency = $("#currency").val();
+            var vat = $("#vat").val();
+            var remark = document.getElementById("remark").value;
+
+            var title1 = "You will Add New Supplier (" + $("#suppliers option:selected").text() + " )";
+            var title2 = "New Supplier Added";
+
+            swal({
+                title: title1,
+                text: price + " "+ currency,
+                    type: "info",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "Yes, Add it!",
+                    cancelButtonText: "No, cancel pls!",
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                },
+                    function (isConfirm) {
+                        if (isConfirm) {
+
+                            //swal("Sended!", "Mails are Sending Now...", "success");
+                            $.ajax({
+                                type: "POST",
+                                url: '@Url.Action("AddNewSupplier")',
+                                data: { 'fileid': fileid, 'lineitemid': lineitemid, 'lineitemimpa': lineitemimpa, 'supplierid': supplierid, 'price': price, 'currency': currency, 'vat': vat, 'remark': remark},
+                                dataType: "json",
+                                traditional: true,
+                                success: function (data) {
+                                    swal({
+                                        title: "Success!",
+                                        text: "New Supplier Added, You Need To Refresh Page to See Updated Table ...",
+                                        type: "success"
+                                    });
+
+                                },
+                                error: function(data) {
+                                    console.log('log data error');
+                                    swal({
+                                        title: "Error!",
+                                        text: "Error Code : S009X Please Refresh The Page And Try Again.",
+                                        type: "error",
+                                        timer: 5000
+                                    });
+                                }
+                            });
+                        } else {
+                            swal("Cancelled", "You have cancelled ...", "error");
+                        }
+                });
+
+
+        }
+
+
+
+    </script>
+}

@@ -1,0 +1,92 @@
+﻿@model  IEnumerable<Appa_MVC.Models.AntrepoMizan>
+@{
+    ViewBag.Title = "Antrepo Mizan";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Antrepo Mizan</h2>
+
+<div>
+
+    <table class="table table-striped dataTables-example">
+        <thead>
+            <tr>
+                <th>Stok Kodu</th> 
+                <th>Stok Adı</th>
+                <th>Satış Fiyat3</th>
+                <th>Bakiye</th> 
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr class="text-left">
+                    <td>
+                        @Html.DisplayFor(modelItem => item.STOK_KODU)
+                    </td> 
+                    <td>
+                        @Html.DisplayFor(modelItem => item.STOK_ADI)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FIYAT3)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.BAKIYE)
+                    </td>
+                </tr>
+            }
+        </tbody>
+
+        <tfoot>
+            <tr>
+                <td colspan="2">
+                    <ul class="pagination pull-right"></ul>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+
+</div>
+
+
+
+@section Styles {
+    @Styles.Render("~/Content/plugins/chosen/chosenStyles")
+    @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
+    @Styles.Render("~/plugins/sweetAlertStyles")
+}
+
+
+@section Scripts {
+    @Scripts.Render("~/plugins/chosen")
+    @Scripts.Render("~/plugins/dataTables")
+    @Scripts.Render("~/plugins/sweetAlert")
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $('.dataTables-example').DataTable({
+                "ordering": false,
+                pageLength: 50,
+                dom: '<"html5buttons"B>lTfgitp',
+                buttons: [
+                    {
+                        extend: 'excel',
+                        title: 'Antrepo_AppaGeneratedExcel'
+                        }
+                    ,
+                    {
+                        extend: 'pdf',
+                        title: 'Antrepo_AppaGeneratedPdf'
+                    }
+
+                ]
+
+            });
+
+
+        });
+
+    </script>
+
+}

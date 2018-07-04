@@ -1,0 +1,147 @@
+﻿@model IEnumerable<Appa_MVC.Models.OrderLineItem>
+
+
+@{
+    ViewBag.Title = "ViewOrderedRfq";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>View Ordered Rfq</h2>
+
+
+
+<div class="ibox-tools">
+    <div class="ibox">
+        <div class="ibox-title">
+            <div class="col-md-9">
+                <h5> <strong>RFQ: @ViewBag.RfqName </strong> </h5>
+            </div>
+            <a class="collapse-link">
+                <i class="fa fa-chevron-up"></i>
+            </a>
+        </div>
+        <div class="ibox-content">
+
+            <table class="table table-striped dataTables-example" data-page-size="25" id="items" style="width: 100%">
+
+                <thead>
+                    <tr>
+                        <th class="hidden"> Id</th>
+                        <th>Number</th>
+                        <th>Impa</th>
+                        <th>Description</th>
+                        <th>Unit</th>
+                        <th>Qtty</th>
+                        <th>Price</th>
+                        <th>A. Qtty</th>
+                        <th>A. Unit</th>
+                        <th>A. Price</th>
+                        <th>Remark</th>
+                        <th>Wr. Qtty</th>
+                        <th>S. Name</th>
+                        <th>S. Price</th>
+                        <th>S. Comment</th>
+
+                    </tr>
+                </thead>
+
+                <tbody>
+
+
+
+                    @{
+
+
+                        var lineitems = Model.OrderBy(l => l.MasterNumber == "0" ? int.Parse(l.Number) : int.Parse(l.MasterNumber)).ToList();
+
+
+                        foreach (var lineitem in lineitems)
+                        {
+                            <tr>
+                                <td class="hidden">
+                                    @Html.DisplayFor(modelItem => lineitem.Id)
+                                </td>
+                                <th>
+                                    @Html.DisplayFor(model => lineitem.Number)
+                                </th>
+                                <th>
+                                    @Html.DisplayFor(model => lineitem.Impa)
+                                </th>
+                                <th>
+                                    @Html.DisplayFor(model => lineitem.Description)
+                                </th>
+                                <th>
+                                    @Html.DisplayFor(model => lineitem.Unit)
+                                </th>
+                                <th>
+                                    @Html.DisplayFor(model => lineitem.Qtty)
+                                </th>
+                                <th>
+                                    @Html.DisplayFor(model => lineitem.Price)
+                                </th>
+                                <th>   @Html.DisplayFor(model => lineitem.AltQtty) </th>
+                                <th>  @Html.DisplayFor(model => lineitem.AltUnit) </th>
+                                <th>  @Html.DisplayFor(model => lineitem.AltPrice) </th>
+                                <th>
+                                    @Html.DisplayFor(model => lineitem.Remark)
+                                </th>
+                                <th> @Html.DisplayFor(model => lineitem.WarehouseInfo)</th>
+                                @*  <th>@Html.Action("GetPriceByWarehouseAndImpa", new { warehouse = "4", impa = lineitem.Impa, fileid = Model.File.Id }) / @Html.Action("GetQttyByWarehouseAndImpa", new { warehouse = "4", impa = lineitem.Impa, fileid = Model.File.Id })  </th>*@
+                                <th>  @Html.DisplayFor(model => lineitem.SelectedSupplierName) </th>
+                                <th>@Html.DisplayFor(model => lineitem.SelectedSupplierCalculatedPrice)</th>
+                                <th>@Html.DisplayFor(model => lineitem.SelectedSupplierRemark)</th>
+                            </tr>
+                        }
+
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="7">
+                            <ul class="pagination pull-right"></ul>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+
+        </div>
+
+        <div class="ibox-footer">
+
+        </div>
+    </div>
+</div>
+
+
+
+@section Styles {
+    @Styles.Render("~/Content/plugins/chosen/chosenStyles")
+    @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
+    @Styles.Render("~/plugins/sweetAlertStyles")
+}
+
+
+@section Scripts {
+    @Scripts.Render("~/plugins/chosen")
+    @Scripts.Render("~/plugins/dataTables")
+    @Scripts.Render("~/plugins/sweetAlert")
+
+    <script type="text/javascript">
+
+
+        $(document).ready(function () {
+
+            $('.dataTables-example').DataTable({
+                "ordering": false,
+                "paging": false,
+                pageLength: 10,
+                dom: '<"html5buttons"B>lTfgitp',
+                buttons: [
+                ]
+
+            });
+
+        });
+    </script>
+
+}

@@ -1,0 +1,47 @@
+﻿@model Appa_MVC.Models.Supplier
+@{
+    ViewBag.Title = "UpdateMail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>supplier name : @Model.SupplierName</h2>
+ 
+
+
+
+
+
+<div class="col-lg-4">
+    <div class="contact-box">
+       @* <a href="@Url.Action("Profile", "AppViews")">*@
+            <div class="col-sm-4">
+                <div class="text-center">
+                    <img alt="image" class="img-circle m-t-xs img-responsive" src="~/Images/logoyeni.png"/>
+                    @*<div class="m-t-xs font-bold"> @Model.SupplierName</div>*@
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <h3><strong> @Model.SupplierName</strong></h3>
+                <p><i class="fa fa-map-marker"></i> @Model.Id</p>
+                <address>
+                    @using (Html.BeginForm("UpdateSupplierMail", "TechnicalLineItem", FormMethod.Post))
+                    {
+                        <form role="form">
+                            <div class="form-group">
+                                @Html.Hidden("fileId", (int)ViewBag.fileId)
+                                @Html.Hidden("supid", @Model.Id)
+                                <input type="text" placeholder="E-mail" class="form-control" id="email" name="email" value=@Model.Mail>
+                            </div>
+                            <div>
+                                <br/>
+                                <button class="btn btn-lg btn-primary pull-right m-t-n-xs" type="submit"><strong>Update</strong></button>
+                            </div>
+                        </form>
+                    }
+            
+                </address>
+            </div>
+            <div class="clearfix"></div>
+        @*</a>*@
+    </div>
+</div>

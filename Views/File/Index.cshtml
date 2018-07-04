@@ -1,0 +1,324 @@
+﻿
+@{
+    ViewBag.Title = "View Files / Add New File<";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="ibox wrapper wrapper-content animated fadeInRight white-bg page-heading">
+
+    <div class="ibox">
+
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h2>Add/View File </h2>
+            </div>
+
+            <div class="ibox-content">
+                <div class="form-group">
+                    <div class="col-lg-12">
+                        <div class="col-sm-12">
+                            <div class="col-sm-3">
+                                <select id="vessels" data-placeholder="Choose a Vessel..." class="chosen-select" tabindex="1"></select>
+                            </div>
+                            <div class="col-sm-2">
+                                <label class="radio-inline">
+                                    <input type="radio" name="optpayment" value="VADE" checked="checked">VADE
+                                </label>
+                                <label class="radio-inline">
+                                    <input type="radio" name="optpayment" value="PEŞİN">PEŞİN
+                                </label>
+                            </div>
+                            <div class="col-sm-3">
+                                <input type="text" placeholder="Company Name" class="form-control" id="txtcompany" name="txtcompany">
+                            </div>
+                            <div class="col-sm-2">
+                                <label class="radio-inline">
+                                    <input type="radio" name="optdep" value="T" checked="checked">T
+                                </label>
+                                <label class="radio-inline">
+                                    <input type="radio" name="optdep" value="P">P
+                                </label>
+                                <label class="radio-inline">
+                                    <input type="radio" name="optdep" value="BN">BN
+                                </label>
+                                <label class="radio-inline">
+                                    <input type="radio" name="optdep" value="SP">SP
+                                </label>
+                                <label class="radio-inline">
+                                    <input type="radio" name="optdep" value="CM">CM
+                                </label>
+                            </div>
+                            <div class="col-sm-2">
+                                <button id="btnnew" class="btn btn-primary btn-block" onClick="add_new();"> Add New File </button>
+                            </div>
+
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="col-sm-3">
+                                <a data-toggle="modal" class="btn btn-primary btn-block" href="#modal-form" id="addvessel" tabindex="5" style="width: 100%">Add New Vessel</a>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <br />
+
+                    <div class="row" style="margin-top:30px; background-color:white">
+
+
+                        <div class="col-md-12">
+                            <table id="example" class="table table-striped" width="100%"></table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<div id="modal-form" class="modal fade" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row">
+
+                    <div class="col-sm-6">
+                        <h4>You can add a new Vessel</h4>
+                        <p>Please Write its name and Select Country:</p>
+                        <p class="text-center">
+                            <a href=""><i class="fa fa-plus big-icon"></i></a>
+                        </p>
+                    </div>
+                    <div class="col-sm-6 b-r">
+                        <h3 class="m-t-none m-b">New Vessel</h3>
+                        
+                        <form role="form">
+                            <div class="form-group">
+                                <input type="text" placeholder="Vessel Name" class="form-control" id="vesselname" name="vesselname">
+                            </div>
+                            <div class="form-group">
+                                <select id="country" data-placeholder="Choose a Country..." class="chosen-select" tabindex="2"></select>
+                            </div>
+                            <div>
+                                <br />
+                                <button class="btn btn-lg btn-info pull-right m-t-n-xs" onclick="newvessel();return false"><strong>Add</strong></button>
+                            </div>
+                        </form>
+                        
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    @Styles.Render("~/Content/plugins/chosen/chosenStyles")
+    @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
+    @Styles.Render("~/plugins/sweetAlertStyles")
+}
+
+
+@section Scripts {
+    @Scripts.Render("~/plugins/chosen")
+    @Scripts.Render("~/plugins/dataTables")
+    @Scripts.Render("~/plugins/sweetAlert")
+
+<script type="text/javascript">
+        $('.chosen-select').chosen({ width: "100%" });
+
+                $(document).ready(function() {
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GetVessels", "Technical")',
+                dataType: 'json',
+                data: {},
+                success: function(vessels) {
+                    $.each(vessels,
+                        function(i, vessel) {
+                            $("#vessels").append(new Option(vessel.Text, vessel.Value));
+
+                        });
+                    $('#vessels').trigger("chosen:updated");
+                },
+                error: function(ex) {
+                    alert('Failed to retrieve Vessels.' + ex);
+                }
+                    });
+
+
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GetCountires")',
+                dataType: 'json',
+                data: {},
+                success: function(vessels) {
+                    $.each(vessels,
+                        function(i, vessel) {
+                            $("#country").append(new Option(vessel.Text, vessel.Value));
+
+                        });
+                    $('#country').trigger("chosen:updated");
+                },
+                error: function(ex) {
+                    alert('Failed to retrieve Vessels.' + ex);
+                }
+            });
+            return false;
+    });
+
+                function add_new() {
+                    var dep = $('input[name=optdep]:checked').val();
+                    var vadepesin = $('input[name=optpayment]:checked').val();
+                    var vesselid = $("#vessels").val();
+                    var company = $("#txtcompany").val();
+
+                    console.log(dep);
+                    console.log(vadepesin);
+                    console.log(vesselid);
+                    console.log(company);
+
+                    var filenumber = "ADMN1800001";
+
+                    if (vesselid!='0') {
+                          $.ajax({
+                                type: "POST",
+                                url: '@Url.Action("AddNewFile")',
+                                data: { 'vesselid': vesselid, 'dep': dep, 'vadepesin': vadepesin, 'company': company},
+                                dataType: "json",
+                                traditional: true,
+                                success: function (data) {
+                                    swal({
+                                        title: "Success!",
+                                        text: "New File Added :" + data.FileNumber,
+                                        type: "success"
+                                    });
+
+                                    $("#vessels").change();
+                                },
+                                error: function(data) {
+                                    console.log('log data error');
+                                    swal({
+                                        title: "Error!",
+                                        text: "Error Code : S009X Please Refresh The Page And Try Again.",
+                                        type: "error",
+                                        timer: 5000
+                                    });
+                                }
+                            });
+                    }
+
+
+
+
+                }
+
+           var dataSet = [];
+        $("#vessels").change(function() {
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GetFilesbyVesselId")',
+                dataType: 'json',
+                data: { vesselid: $("#vessels").val() },
+                success: function (files) {
+
+                    dataSet = [];
+                    $.each(files,
+                        function (i, file) {
+                            var date = new Date(file.CreatedDate);
+                            var value = new Date
+                                (
+                                parseInt(file.CreatedDate.replace(/(^.*\()|([+-].*$)/g, ''))
+                                );
+                            var dts = [file.FileNumber, file.Department, file.IsClosed, file.VadePesin, file.Company, file.Createduser, value ];
+                            dataSet.push(dts);
+                        });
+
+                    $('#example').DataTable({
+                        select: {
+                            style: 'single'
+                        },
+                        data: dataSet,
+                        columns: [
+                            { title: "File Name" },
+                            { title: "Department" },
+                            { title: "Is Closed" },
+                            { title: "Vade / Peşin" },
+                            { title: "Company" },
+                            { title: "User" },
+                            { title: "Created Date" }
+                        ],
+                        paging: false,
+                        searching: false,
+                        destroy: true,
+
+                    });
+
+                 //table için gerekli değerler
+
+                },
+                error: function(ex) {
+                    alert('Failed to retrieve Referances.' + ex);
+                }
+            });
+            return false;
+
+           });
+
+
+        function newvessel()
+        {
+
+            var vesselname = $("#vesselname").val();
+            var vesselflag = $("#country").val();
+                      $.ajax({
+                     type: "POST",
+                     url: '@Url.Action("AddVessel")',
+                     data: { 'ulkekodu': vesselflag, 'cari_isim': vesselname},
+                     dataType: "json",
+                     traditional: true,
+                     success: function (data) {
+
+                         if (data.success) { 
+                             var location = window.location.href;
+                             window.location = location;
+                         }
+
+
+                         if (data.success == false) {
+                             swal({
+                                 title: "Error!",
+                                 text: "Error Code : S021X Please Select Country To Add New Vessel.",
+                                 type: "error",
+                                 timer: 5000
+                             });
+                         }
+
+
+                     },
+                     error: function(data) {
+                         console.log('log data error');
+                         swal({
+                             title: "Error!",
+                             text: "Error Code : S021X Please Refresh The Page And Try Again.",
+                             type: "error",
+                             timer: 5000
+                         });
+                     }
+                 });
+
+           
+
+
+
+        }
+
+</script>
+}

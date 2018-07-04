@@ -1,0 +1,219 @@
+﻿@model Appa_MVC.Models.ReferanceNumber
+
+@{
+    ViewBag.Title = "Split Order EditRfq";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@section Styles {
+    @Styles.Render("~/Content/plugins/chosen/chosenStyles")
+    @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
+    @Styles.Render("~/plugins/sweetAlertStyles")
+}
+@section Scripts {
+    @Scripts.Render("~/plugins/chosen")
+    @Scripts.Render("~/plugins/dataTables")
+    @Scripts.Render("~/plugins/sweetAlert")
+
+    <script type="text/javascript">
+        var editor; // use a global for the submit and return data rendering in the examples
+
+        function GetURLParameter() {
+            var sPageURL = window.location.href;
+
+            //var sPageURL = window.location.href;
+            var indexOfLastSlash = sPageURL.lastIndexOf("/");
+
+            if (indexOfLastSlash > 0 && sPageURL.length - 1 != indexOfLastSlash)
+                return sPageURL.substring(indexOfLastSlash + 1);
+            else
+                return 0;
+        }
+
+        $(document).ready(function () {
+
+            var url = window.location.href;
+
+            var params = GetURLParameter();
+            var paramlists = params.split('~');
+            var number = paramlists[0];
+
+            //var number = url.match(/(\d+)$/g);
+
+            editor = new $.fn.dataTable.Editor({
+                ajax: "/TechnicalSplit/GetRfqItems/" + number,
+                table: "#example",
+                fields: [{
+                    label: "Number :",
+                    name: "Number"
+                }, {
+                    label: "Impa:",
+                    name: "Impa"
+                }, {
+                    label: "Description:",
+                    name: "Description"
+                }, {
+                    label: "Unit:",
+                    name: "Unit"
+                }
+                    , {
+                    label: "Qtty:",
+                    name: "Qtty"
+                }
+                    , {
+                    label: "Price:",
+                    name: "Price"
+                }
+                    , {
+                    label: "Remark:",
+                    name: "Remark"
+                }
+                    , {
+                    label: "Alt.Unit:",
+                    name: "AltUnit"
+                }
+                    , {
+                    label: "Alt.Qtty:",
+                    name: "AltQtty"
+                }
+                    , {
+                    label: "Alt.Price:",
+                    name: "AltPrice"
+                }
+                    , {
+                    label: "Selected Supplier:",
+                    name: "SelectedSupplierName"
+                }
+                    , {
+                    label: "Supplier Price:",
+                    name: "SelectedSupplierCalculatedPrice"
+                    }
+                    , {
+                        label: "Supplier Remark:",
+                        name: "SelectedSupplierRemark"
+                    }
+                ]
+            });
+
+            // Activate an inline edit on click of a table cell
+            $('#example').on('click', 'tbody td.editable', function (e) {
+                editor.inline(this, {
+                    onBlur: 'submit'
+                });
+            });
+
+            $('#example').DataTable({
+                dom: "Bfrtip",
+                ajax: "/TechnicalSplit/GetRfqItems/" + number,
+                "ordering": false,
+                "paging": false,
+                columns: [
+                    {
+                        data: null,
+                        defaultContent: '',
+                        className: 'select-checkbox',
+                        orderable: false
+                    },
+                    { data: "Number", className: 'editable' },
+                    { data: "Impa", className: 'editable' },
+                    { data: "Description", className: 'editable' },
+                    { data: "Unit", className: 'editable' },
+                    { data: "Qtty", className: 'editable' },
+                    { data: "Price", className: 'editable' },
+                    { data: "Remark", className: 'editable' },
+                    { data: "AltUnit", className: 'editable' },
+                    { data: "AltQtty", className: 'editable' },
+                    { data: "AltPrice", className: 'editable' },
+                    { data: "SelectedSupplierName" },
+                    { data: "SelectedSupplierCalculatedPrice", className: 'editable' },
+                    { data: "SelectedSupplierRemark", className: 'editable' }
+
+                ],
+                select: {
+                    style: 'os',
+                    selector: 'td:first-child'
+                },
+                buttons: [
+                    { extend: "remove", editor: editor }
+                ]
+            });
+        });
+
+
+        $('#btnback').click(function () {
+            var querrystring = "ids=" + $("#querrystring").val();
+            window.location = '/TechnicalSplit/split?' + querrystring;
+        });
+
+        $('#btnback2').click(function () {
+            var querrystring = "ids=" + $("#querrystring").val();
+            window.location = '/TechnicalSplit/split?' + querrystring;
+        });
+
+
+    
+
+
+    </script>
+}
+
+    <div class="white-bg page-heading">
+
+
+
+        <div class="row wrapper border-bottom white-bg page-heading">
+            <div class="col-sm-4">
+                <h2>Edit</h2>
+                <ol class="breadcrumb">
+                    <li>
+                        @Html.Hidden("querrystring", (object)ViewBag.querry.ToString())
+                        <button id="btnback" class="btn btn-primary btn-block"> Back To List </button>
+                    </li>
+                    <li class="active">
+                        <strong>Edit</strong>
+                    </li>
+                </ol>
+            </div>
+            <div class="col-sm-8">
+                <div class="title-action">
+                    <button id="btnback2" class="btn btn-primary "> Back To List </button>
+                </div>
+            </div>
+        </div>
+
+
+        <body class="dt-example net">
+            <div class="ibox wrapper border-bottom white-bg">
+                <section>
+                    <h1> @Model.Name</h1>
+                    <h2>Edit RFQ's Items <span> click on the cell you want to edit</span> and press ENTER</h2>
+                    <div class="demo-html"></div>
+                    <table id="example" class="display table table-striped dataTables-example" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Number</th>
+                                <th>Impa</th>
+                                <th>Description</th>
+                                <th>Unit</th>
+                                <th>Qtty</th>
+                                <th>Price</th>
+                                <th>Remark</th>
+                                <th>Alt.Unit</th>
+                                <th>Alt.Qtty</th>
+                                <th>Alt.Price</th>
+                                <th>Supplier</th>
+                                <th>S. Price</th>
+                                <th>S. Remark</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </section>
+            </div>
+
+        </body>
+
+
+
+    </div>

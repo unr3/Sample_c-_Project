@@ -1,0 +1,391 @@
+﻿@using Appa_MVC.Models
+@model  SalesFileViewModel
+
+@{
+    ViewBag.Title = "Sale Department Selected File";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<div class="ibox ">
+    <div class="ibox-title">
+        <div class="alert alert-warning" role="alert">
+            <h2> File: @ViewBag.filename</h2>
+            <p>
+                Fallowing Rfqs Are<strong>  Ready to Create Quotation File </strong>  You Could Generate Excel for Rfqs on the Below.
+                <br />
+                <strong> If the Rfqs are Ordered </strong>  Please Select them and Click on <strong>Selected RFQs Are Ordered. </strong>
+
+                <br />
+            </p>
+        </div>
+    </div>
+
+    <div class="ibox-content">
+
+        <div class="row col-md-12">
+            @{ Html.RenderAction("UpdateFileDetails", "Technical"); }
+
+            @*<div class="ibox-tools">
+                <div class="ibox">
+                    <div class="ibox-title">
+                        <h5> <strong> File Information And Department Notes </strong> </h5>
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                    </div>
+                    <div class="ibox-content">
+                        @using (Html.BeginForm())
+                {
+                    @Html.AntiForgeryToken()
+
+                    <div class="form-horizontal">
+                        @Html.ValidationSummary(true)
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.File.FileNumber, new { @class = "control-label col-md-4" })
+                                <div class="col-md-8">
+                                    @Html.TextBoxFor(model => model.File.FileNumber, new { @class = "form-control", disabled = "disabled" })
+                                    @Html.ValidationMessageFor(model => model.File.FileNumber)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.File.Company, new { @class = "control-label col-md-4" })
+                                <div class="col-md-8">
+                                    @Html.TextBoxFor(model => model.File.Company, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.File.Company)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.File.Currency, new { @class = "control-label col-md-6" })
+                                <div class="col-md-6">
+                                    @{
+                                var currencylist = Enum.GetValues(typeof(CurrencyList.Currencies)).OfType<CurrencyList.Currencies>().Select(m => new { Text = m.ToString(), Value = (int)m }).ToList();
+
+                                @Html.DropDownListFor(m => m.File.Currency, new SelectList(currencylist, "Value", "Text"), new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.File.Currency)
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.File.Discount, new { @class = "control-label col-md-6" })
+                                <div class="col-md-6">
+                                    @Html.TextBoxFor(model => model.File.Discount, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.File.Discount)
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.File.DeliveryCost, new { @class = "control-label col-md-6" })
+                                <div class="col-md-6">
+                                    @Html.TextBoxFor(model => model.File.DeliveryCost, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.File.DeliveryCost)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.File.DeliveryPlace, new { @class = "control-label col-md-4" })
+                                <div class="col-md-8">
+                                    @Html.TextBoxFor(model => model.File.DeliveryPlace, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.File.DeliveryPlace)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.File.PaymentTerm, new { @class = "control-label col-md-4" })
+                                <div class="col-md-8">
+                                    @Html.TextBoxFor(model => model.File.PaymentTerm, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.File.PaymentTerm)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.File.Note1, new { @class = "control-label col-md-2" })
+                                <div class="col-md-10">
+                                    @Html.TextBoxFor(model => model.File.Note1, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.File.Note1)
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.File.Note2, new { @class = "control-label col-md-2" })
+                                <div class="col-md-10">
+                                    @Html.TextBoxFor(model => model.File.Note2, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.File.Note2)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.File.Note3, new { @class = "control-label col-md-2" })
+                                <div class="col-md-10">
+                                    @Html.TextBoxFor(model => model.File.Note3, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.File.Note3)
+                                </div>
+                                @Html.HiddenFor(model => model.File.Id)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="">
+                                <div class="">
+                                    <input type="submit" value="Update" class="btn btn-danger demo2 btn-block" />
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+        }
+                    </div>
+                </div>
+            </div>*@
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                @*<h3>On Approve Rfq Numbers : and Return Rfq To Edit Button </h3>*@
+                <table class="table table-striped dataTables-rfq">
+                    <thead>
+                        <tr>
+                            <th class="hidden"></th>
+                            <th>Rfq Name</th>
+                            <th>Is Ordered</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.ReferanceNumbers)
+                        { 
+                           <tr class="text-left"> 
+                            <td class="hidden">
+                                @Html.DisplayFor(modelItem => item.Id)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.IsOrdered)
+                            </td>
+                            <td>
+                                @Html.ActionLink("View Rfq", "ViewRfq", "TechnicalLineItem", new { id = item.Id }, new { @class = "btn btn-block btn-info", target = "_blank" })
+                            </td>
+
+                        </tr>
+                             
+                        }
+                    </tbody>
+
+                    <tfoot>
+                        <tr>
+                            <td colspan="2">
+                                <ul class="pagination pull-right"></ul>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <div class="col-md-6">
+
+                <div style="margin-top:12%">
+                    <button id="btnexcel" class="btn btn-primary btn-block"> Generate Excel For Selected Rfqs </button>
+                </div>
+                <div style="margin-top:20px">
+                    <button id="btnordered" class="btn btn-warning btn-block"> Selected RFQs Are Ordered </button>
+                </div>
+
+            </div>
+        </div>
+
+
+        
+
+    </div>
+</div>
+
+@section Styles {
+
+    @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
+    @Styles.Render("~/Content/plugins/chosen/chosenStyles")
+    @Styles.Render("~/plugins/sweetAlertStyles")
+
+}
+
+@section Scripts {
+
+    @Scripts.Render("~/plugins/dataTables")
+    @Scripts.Render("~/plugins/chosen")
+    @Scripts.Render("~/plugins/sweetAlert")
+
+<script type="text/javascript">
+
+        $(document).ready(function() {
+             
+
+            $('.dataTables-rfq').DataTable({
+                select: {
+                    style: 'multi'
+                },
+                pageLength: 25,
+                dom: '<"html5buttons"B>lTfgitp',
+                buttons: [
+                    //{ extend: 'copy' },
+                    //{ extend: 'csv' },
+                    {
+                        extend: 'excel',
+                        title: 'AppaGeneratedExcel',
+
+                    },
+                    {
+                        extend: 'pdf',
+                        title: 'AppaGeneratedPdf',
+
+                    },
+                    {
+                        extend: 'print',
+
+                        customize: function(win) {
+                            $(win.document.body).addClass('white-bg');
+                            $(win.document.body).css('font-size', '10px');
+
+                            $(win.document.body).find('table')
+                                .addClass('compact')
+                                .css('font-size', 'inherit');
+                        }
+                    }
+                ]
+
+            });
+    });
+
+
+         $('#btnexcel').click(function () {
+
+                        swal({
+                    title: "Are you sure?",
+                    text: "You will Generate An Excel For Selected Rfqs !",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "Yes, Generate it!",
+                    cancelButtonText: "No, cancel pls!",
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                },
+                    function (isConfirm) {
+                        if (isConfirm) {
+
+                            var table = $('.dataTables-rfq').DataTable();
+
+                            var ids = $.map(table.rows('.selected').data(),
+                                function (item) {
+                                    return item[0];
+                                });
+
+                            console.log(ids);
+                             $.ajax({
+                                        type: "POST",
+                                        url: '@Url.Action("CreateExcel")',
+                                        data: { 'rfqids': ids },
+                                        dataType: "json",
+                                        traditional: true,
+                                        success: function (data) { 
+                                            console.log(data.FileName);
+
+                                            window.location = '/Sales/download?filename=' + data.FileName;
+
+                                            swal({
+                                                title: "Success!",
+                                                text: "File have been generated and Download will start soon, if there is an error please contact with bkardas@adamarine.com",
+                                                type: "success",
+                                                timer: 5000
+                                            });
+                                        },
+                                        error: function (data) {
+                                            console.log(data);
+                                    console.log('log data error');
+                                    swal({
+                                        title: "Error!",
+                                        text: "Error Code : S009X Please Refresh The Page And Try Again.",
+                                        type: "error",
+                                        timer: 5000
+                                    });
+                                }
+                            });
+                        } else {
+                            swal("Cancelled", "You have cancelled :)", "error");
+                        }
+                    });
+        });
+
+
+            $('#btnordered').click(function () {
+
+                        swal({
+                    title: "Are you sure?",
+                    text: "Selected Rfqs Are Ordered !",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "Yes, They are Ordered and Move them to Split Order Stage!",
+                    cancelButtonText: "No, cancel pls!",
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                },
+                    function (isConfirm) {
+                        if (isConfirm) {
+
+                            var table = $('.dataTables-rfq').DataTable();
+
+                            var ids = $.map(table.rows('.selected').data(),
+                                function (item) {
+                                    return item[0];
+                                });
+
+                            console.log(ids);
+                             $.ajax({
+                                        type: "POST",
+                                        url: '@Url.Action("RfqsOrdered")',
+                                        data: { 'rfqids': ids },
+                                        dataType: "json",
+                                        traditional: true,
+                                        success: function(data) {
+                                            swal({
+                                                title: "Success!",
+                                                text: "Rfqs are Moved To Ordered Stage...",
+                                                type: "success",
+                                                timer: 5000
+                                            });
+                                        },
+                                error: function(data) {
+                                    console.log('log data error');
+                                    swal({
+                                        title: "Error!",
+                                        text: "Error Code : S021X Please Refresh The Page And Try Again.",
+                                        type: "error",
+                                        timer: 5000
+                                    });
+                                }
+                            });
+                        } else {
+                            swal("Cancelled", "You have cancelled :)", "error");
+                        }
+                    });
+               });
+
+</script>
+}

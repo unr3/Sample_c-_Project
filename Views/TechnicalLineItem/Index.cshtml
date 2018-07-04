@@ -1,0 +1,475 @@
+﻿@model IEnumerable<Appa_MVC.Models.LineItem>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-12">
+        <h2>Technical Department</h2>
+        <ol class="breadcrumb">
+            <li>
+                @Html.ActionLink("Vessel Name :", "Index", "Technical", null, null) @ViewBag.VesselName
+            </li>
+            <li>
+                @Html.ActionLink("File Number :", "Index", "Technical", null, null) @ViewBag.FileName
+            </li> 
+            <li>
+                <strong>Referance Number; @ViewBag.RfqName </strong>  
+            </li>
+            
+            <div class="pull-right">
+                <div>
+               
+                    @Html.ActionLink("Move/Delete Rfq", "RemoveRfq", new { id = @ViewBag.id }, new { @class = "btn btn-danger btn-sm" })
+                </div> 
+            </div>
+        
+        </ol>
+    </div>
+</div>
+
+
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="alert text-center">
+                <p>
+                    You Could Add/Edit or Delete Item for Referance on this Page.
+                    <strong>If you got an unexpected error please take a screenshot and send to bkardas@adamarine.com </strong>
+                </p>
+            </div>
+        </div>
+    </div>
+    
+ 
+    Tedarikçi çıkarılınca bir daha eklenmesin.
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    @Html.ActionLink("Download Excel Sample", "DownloadExcelSample", null, new { @class = "btn btn-info btn-md" })
+                    <div class="ibox-tools">
+                        @Html.ActionLink("Create New Item ", "Create", new { id = @ViewBag.id }, new { @class = "btn btn-primary btn-md" })
+                    </div>
+
+                    <div class="ibox-tools">
+                        <div class="ibox">
+                            <div class="ibox-title">
+                                <h5>Upload Vship's Xml or Excel Document to <strong> @ViewBag.VesselName  / @ViewBag.FileName / @ViewBag.RfqName </strong> </h5>
+                                <a class="collapse-link">
+                                    <i class="fa fa-chevron-up"></i>
+                                </a>
+                            </div>
+                            <div class="ibox-content">
+                                <form action="~/TechnicalLineItem/SaveUploadedFile/@ViewBag.id" class="dropzone" id="dropzoneForm">
+                                    <div class="fallback">
+                                        <input name="file" type="file" multiple />
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                       
+          
+
+                </div>
+                <div class="ibox-content">
+                    <table class="table table-striped dataTables-example" data-page-size="25" id="items">
+                        @*footable table table-striped toggle-arrow-tiny*@
+                        <thead>
+                        <tr>
+                            <th class="hidden"> @Html.DisplayNameFor(model => model.Id)</th>
+
+                            <th>
+                                @Html.DisplayNameFor(model => model.Number)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Impa)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Description)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Unit)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Qtty)
+                            </th>
+
+                            <th>Suppliers</th>
+
+
+                            <th>Buttons</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="hidden">
+                                    @Html.DisplayFor(modelItem => item.Id)
+                                </td>
+
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Number)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Impa)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Description)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Unit)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Qtty)
+                                </td>
+                                <td>
+                                    <ul>
+                                        @{
+                                            if (ViewBag.Stage != 1 && item.LineItemSuppliers.Count > 0)
+                                            {
+                                                foreach (var sup in item.LineItemSuppliers)
+                                                {
+                                                    <li>
+                                                        <strong>@sup.SupplierName</strong>
+                                                    </li>
+                                                }
+                                            }
+                                        }
+                                    </ul>
+                                </td>
+                                <td>
+                                    @if (ViewBag.Stage != 1)
+                                    {
+                                        @Html.ActionLink("Suppliers", "Suppliers", new { id = item.Id }, new { @class = "btn btn-primary btn-sm" })
+                                    }
+
+                                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }, new { @class = "btn  btn-sm btn-warning" })
+                                    @Html.ActionLink("Delete", "Delete", new { id = item.Id }, new { @class = "btn btn-sm btn-danger" })
+                                </td>
+                            </tr>
+                        }
+                        </tbody>
+                        <tfoot>
+                        <tr>
+                            <td colspan="7">
+                                <ul class="pagination pull-right"></ul>
+                            </td>
+                        </tr>
+                        </tfoot>
+                    </table>
+                    
+                    
+                    @if (ViewBag.Stage != 1 && ViewBag.Stage != 0)
+                    {
+                        <div class="ibox-tools">
+                            <div class="ibox ">
+                                <div class="ibox-title">
+                                    <h5>Add or Remove <strong>Suppliers</strong> on Selected Items</h5>
+                                    <div class="ibox-tools">
+                                        <a class="collapse-link">
+                                            <i class="fa fa-chevron-up"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="ibox-content">
+                                    <a data-toggle="modal" role="button" class="btn btn-primary" href="#modal-form" id="addremovesupplier" tabindex="5" style="width: 100%">Add/Remove Suppliers on Selected Items</a>
+
+                                    <br />
+                                    <div  style="margin-top: 30px;">
+                                        <button id="btnremoveall" class="btn btn-warning btn-md btn-block">Remove All Suppliers</button>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <div class="ibox-footer">
+                    @if (ViewBag.Stage == 1)
+                    {
+                        @Html.ActionLink("Writing Completed", "WritingCompleted", new { id = @ViewBag.id }, new { @class = "btn btn-success btn-md btn-block" })
+                    }
+                    @if (ViewBag.Stage != 1 && ViewBag.Stage != 0)
+                    {
+                        <div style="margin-top: 20px" class="col-md-12">
+                            @Html.ActionLink("Adding Suppliers Completed", "AddingSuppliersCompleted", new { id = @ViewBag.id }, new { @class = "btn btn-success btn-md btn-block" })
+                        </div>
+                    }
+                     
+                </div>
+
+                
+  
+
+            </div> 
+        </div>
+    </div>
+    
+<div id="modal-form" class="modal fade " aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-body">
+                
+                <div class="row">
+
+                    <div class="col-sm-7">
+                        <div class="row">
+                            <h4>Selected Items</h4>
+                            <ul id="selecteditems">
+                            </ul>
+                        </div>
+                       
+
+                        <div class="row text-center">
+                            <select id="suppliers" data-placeholder="Select Suppliers" multiple class="chosen-select" tabindex="8"></select>
+                            <input type="hidden" id="RfqId" value="@ViewBag.id"/>
+                        </div>
+                    </div>
+                    <div class="col-sm-5">
+
+                        <div class="row" style="margin-left: 15px">
+                            <button id="btnaddsupplier" class="btn btn-info btn-md btn-block">Add Suppliers To Selected Items</button>
+                        </div>
+                        <div class="row" style="margin-top: 30px; margin-left: 15px">
+                            <button id="btnremovesupplier" class="btn btn-danger btn-md btn-block">Remove Suppliers from Selected Items</button>
+                        </div> 
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+ 
+</div>
+
+
+
+
+
+
+@section Styles {
+    @Styles.Render("~/Content/plugins/dropzone/dropZoneStyles")
+    @Styles.Render("~/plugins/footableStyles")
+    @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
+    @Styles.Render("~/Content/plugins/chosen/chosenStyles")
+
+}
+
+@section Scripts {
+    @Scripts.Render("~/plugins/dropZone")
+    @Scripts.Render("~/plugins/footable")
+    @Scripts.Render("~/plugins/dataTables")
+    @Scripts.Render("~/plugins/chosen")
+
+<script type="text/javascript">
+
+        $('.chosen-select').chosen({ width: "100%" });
+
+        $(window).on('shown.bs.modal', function() {
+            var table = $('.dataTables-example').DataTable();
+            var list = $("#selecteditems");
+            var parent = list.parent();
+
+            var selectedimpas = $.map(table.rows('.selected').data(),
+                function(item) {
+                    return item[2];
+                });
+
+            var selecteddescription = $.map(table.rows('.selected').data(),
+                function(item) {
+                    return item[3];
+                });
+
+            list.detach().empty().each(function(i){
+                for (var x = 0; x < selectedimpas.length; x++){
+                    console.log(selectedimpas[x]);
+                    $(this).append('<li>' + '<strong>' + selectedimpas[x] +'</strong>' + '--' + selecteddescription[x]+ '</li>');
+                    if (x === selectedimpas.length - 1){
+                        $(this).appendTo(parent);
+                    }
+                }
+            });
+            $('#myModal').modal('show');
+
+        });
+
+
+        $(document).ready(function() {
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GetSuppliers")',
+                dataType: 'json',
+                data: {},
+                success: function(suppliers) {
+                    $.each(suppliers,
+                        function(i, supplier) {
+                            $("#suppliers").append(new Option(supplier.Text, supplier.Value));
+
+                        });
+                    $('#suppliers').trigger("chosen:updated");
+                },
+                error: function(ex) {
+                    alert('Failed to retrieve Suppliers.' + ex);
+                }
+            });
+
+            $('.dataTables-example').DataTable({
+                "paging": false,
+                select: {
+                    style: 'multi'
+                },
+                pageLength: 25,
+                dom: '<"html5buttons"B>lTfgitp',
+                buttons: [
+                    'selectAll',
+                    'selectNone',
+                    //{ extend: 'copy' },
+                    //{ extend: 'csv' },
+                    {
+                        extend: 'excel',
+                        title: 'AppaGeneratedExcel',
+                        exportOptions: {
+                            columns: [1, 2, 3, 4, 5]
+                        }
+                    },
+                    {
+                        extend: 'pdf',
+                        title: 'AppaGeneratedPdf',
+                        exportOptions: {
+                            columns: [1, 2, 3, 4, 5]
+                        }
+                    },
+                    {
+                        extend: 'print',
+
+                        customize: function(win) {
+                            $(win.document.body).addClass('white-bg');
+                            $(win.document.body).css('font-size', '10px');
+
+                            $(win.document.body).find('table')
+                                .addClass('compact')
+                                .css('font-size', 'inherit');
+                        }
+                    }
+                ]
+
+            });
+        });
+
+        Dropzone.options.dropzoneForm = {
+            acceptedFiles: ".xml,.xlsx",
+            maxFiles: 1,
+            init: function() {
+                this.on("complete",
+                    function(data) {
+                        //var res = eval('(' + data.xhr.responseText + ')');
+                        var res = JSON.parse(data.xhr.responseText);
+
+                        if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
+                            location.reload();
+                        }
+                    });
+            }
+        };
+
+        $('#btnaddsupplier').click(function() {
+            var table = $('.dataTables-example').DataTable();
+
+            var ids = $.map(table.rows('.selected').data(),
+                function(item) {
+                    return item[0];
+                });
+
+            console.log(ids);
+            console.log($("#suppliers").val());
+            console.log($("#RfqId").val());
+
+            var supplierids = $("#suppliers").val();
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("AddSuppliersMultiple")',
+                data: { 'lineitemids': ids, 'supplierids': supplierids, 'rfqId': $("#RfqId").val() },
+                dataType: "json",
+                traditional: true,
+                success: function(data) {
+                    window.location.href = data;
+                }
+            });
+
+        });
+
+        $('#btnremovesupplier').click(function() {
+            var table = $('.dataTables-example').DataTable();
+            var ids = $.map(table.rows('.selected').data(),
+                function(item) {
+                    return item[0];
+                });
+            console.log(ids);
+            console.log($("#suppliers").val());
+            console.log($("#RfqId").val());
+
+            var supplierids = $("#suppliers").val();
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("RemoveSuppliersMultiple")',
+                data: { 'lineitemids': ids, 'supplierids': supplierids, 'rfqId': $("#RfqId").val() },
+                dataType: "json",
+                traditional: true,
+                success: function(data) {
+                    window.location.href = data;
+                },
+                error: function(data) {
+                    console.log('log data error');
+                    swal({
+                        title: "Error!",
+                        text: "Please Control",
+                        type: "error",
+                        timer: 5000
+                    });
+                }
+            });
+
+
+        });
+
+
+        $('#btnremoveall').click(function() {
+            
+            console.log($("#RfqId").val()); 
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("RemoveAllSuppliers")',
+                data: {'rfqId': $("#RfqId").val() },
+                dataType: "json",
+                traditional: true,
+                success: function(data) {
+                    window.location.href = data;
+                },
+                error: function(data) {
+                    console.log('log data error');
+                    swal({
+                        title: "Error!",
+                        text: "Please Control",
+                        type: "error",
+                        timer: 5000
+                    });
+                }
+            });
+
+
+        });
+</script>
+}

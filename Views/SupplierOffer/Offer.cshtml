@@ -1,0 +1,237 @@
+﻿@model IEnumerable<Appa_MVC.Models.SupplierPriceLineItem>
+
+@{
+    ViewBag.Title = "Offer";
+    Layout = "~/Views/Shared/_LayoutSupplier.cshtml";
+}
+
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title" style="background: #f9f9f9;">
+
+                <h4>Tedarikçi :  <strong> @ViewBag.SupplierName </strong> </h4>
+                <br />
+                <h4>Dosya Numarası : <strong>  @ViewBag.FileNumber </strong></h4>
+                <br />
+                @{
+        if (ViewBag.IsComplated)
+        {
+            <h4>Bu Listeye Vermiş Olduğunuz Fiyatı : <strong>  @ViewBag.ComplatedDate </strong> Tarihinde Onayladınız. Onaylayan isim <strong>@ViewBag.UserName </strong></h4>
+}
+else
+{
+            <h4>Listeyi Onaylamak ve İşleme alınmasını sağlamak için lütfen en altta bulunan  <strong> Fiyatlarım Güncel ve Onaylıyorum</strong> butonuna basınız. </h4>
+}
+                }
+
+
+                <br />
+              
+                <div class="col-lg-3 pull-right">
+                    @Html.ActionLink("Hızlı Fiyat Ver ", "EditRfq", new { id = @ViewBag.OfferId }, new { @class = "btn btn-info btn-block ", style = "color: white" })
+                </div>
+                  
+                
+              
+            </div>
+            <div class="ibox-content">
+                <table class="table table-striped dataTables-example" data-page-size="25" id="items">
+                    @*footable table table-striped toggle-arrow-tiny*@
+                    <thead>
+                    <tr>
+                        <th class="hidden"> @Html.DisplayNameFor(model => model.Id)</th>
+         
+                        <th>
+                            @Html.DisplayNameFor(model => model.LineItem.Impa)
+                        </th>
+                        <th>
+                            Ürün Tanımı
+                        </th>
+                        <th>
+                            Birim
+                        </th>
+                        <th>
+                            Adet
+                        </th>
+                        <th>
+                            Fiyatınız
+                        </th>
+                        <th>
+                            Döviz
+                        </th>
+                        <th>
+                            KDV
+                        </th>
+                        <th>
+                            Yorum
+                        </th>
+
+
+
+                        <th>   </th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="hidden">
+                                @Html.DisplayFor(modelItem => item.Id)
+                            </td>
+                            @*<th>
+                                    @Html.DisplayFor(model => item.LineItem.ReferanceNumberId)
+                                </th>*@
+                            <th>
+                                @Html.DisplayFor(model => item.LineItem.Impa)
+                            </th>
+                            <th>
+                                @Html.DisplayFor(model => item.LineItem.Description)
+                            </th>
+                            <th>
+                                @Html.DisplayFor(model => item.LineItem.Unit)
+                            </th>
+                            <th>
+                                @Html.DisplayFor(model => item.LineItem.Qtty)
+                            </th>
+                            <th>
+                                @Html.DisplayFor(model => item.SupplierPrice)
+                            </th>
+                            <th>
+                                @Html.DisplayFor(model => item.Currency)
+                            </th>
+                            <th>
+                                @Html.DisplayFor(model => item.Vat)
+                            </th>
+                            <th>
+                                @Html.DisplayFor(model => item.Comment)
+                            </th>
+                            <th class="pull-right">
+                                @Html.ActionLink("Fiyat Ver / Güncelle", "Edit", new { id = item.Id,offerid=@ViewBag.OfferId }, new { @class = "btn  btn-sm btn-warning" })
+                            </th>
+
+                        </tr>
+                    }
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <td colspan="7">
+                            <ul class="pagination pull-right"></ul>
+                        </td>
+                    </tr>
+                    </tfoot>
+                </table>
+
+
+            </div>
+
+            <div class="ibox-footer">
+
+                <a data-toggle="modal" class="btn btn-primary btn-block" href="#modal-form" id="btncomplate" tabindex="5" style="width: 100%">Fiyatlarım Güncel ve Onaylıyorum. (Sistemde bulunan Kayıtlı Mail adresinize Vermiş olduğunuz Fiyatlar Gönderilecektir)</a>
+            </div>
+
+
+
+
+        </div>
+    </div>
+</div>
+    
+<div id="modal-form" class="modal fade" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row">
+
+                    <div class="col-sm-6">
+                        <h4>Sayın @ViewBag.SupplierName Yetkilisi</h4>
+                        <p>Lütfen Adınızı Girip Fiyatlamayı Tamamladım Butonuna Basınız</p>
+                        <p class="text-center">
+                            <a href=""><i class="fa fa-thumbs-up big-icon"></i></a>
+                        </p>
+                    </div>
+                    <div class="col-sm-6 b-r">
+                        <h3 class="m-t-none m-b">Ad Soyad </h3>
+                        @using (Html.BeginForm("Complated", "SupplierOffer", FormMethod.Post))
+                        {
+                            <form role="form">
+                                <div class="form-group">
+                                    <input type="hidden" name="orderId" id="orderId" value=@ViewBag.OrderId />
+                                    <input type="text" placeholder="Ad Soyad" class="form-control" id="name" name="name" required>
+                                </div>
+                                <div>
+                                    <br/>
+                                    <button class="btn btn-lg btn-primary pull-right m-t-n-xs" type="submit"><strong>Fiyatlamayı Tamamladım</strong></button>
+                                </div>
+                            </form>
+                        }
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Styles { 
+    @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles") 
+
+}
+
+@section Scripts {
+ 
+    @Scripts.Render("~/plugins/dataTables")
+ 
+
+    <script type="text/javascript">
+  
+
+        $(document).ready(function() { 
+
+            $('.dataTables-example').DataTable({
+                "paging": false, 
+                pageLength: 25,
+                dom: '<"html5buttons"B>lTfgitp',
+                buttons: [
+                    //{ extend: 'copy' },
+                    //{ extend: 'csv' },
+                    {
+                        extend: 'excel',
+                        title: 'AppaGeneratedExcel',
+                        exportOptions: {
+                            columns: [1, 2, 3, 4, 5,6,7,8]
+                        }
+                    },
+                    {
+                        extend: 'pdf',
+                        title: 'AppaGeneratedPdf',
+                        exportOptions: {
+                            columns: [1, 2, 3, 4, 5,6,7,8]
+                        }
+                    },
+                    {
+                        extend: 'print',
+
+                        customize: function(win) {
+                            $(win.document.body).addClass('white-bg');
+                            $(win.document.body).css('font-size', '10px');
+
+                            $(win.document.body).find('table')
+                                .addClass('compact')
+                                .css('font-size', 'inherit');
+                        }
+                    }
+                ]
+
+            });
+        });
+
+ 
+ 
+
+ 
+    </script>
+}

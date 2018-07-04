@@ -1,0 +1,266 @@
+﻿@model Appa_MVC.Models.SaleReportViewModel
+@using Appa_MVC.Models
+
+@{
+    ViewBag.Title = "SaleReport";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Sale Departmen Master Report</h2>
+
+
+<input type="text" class="form-control input-sm m-b-xs" id="filter"
+       placeholder="Search in table">
+
+<table class="footable table table-stripped toggle-arrow-tiny" data-page-size="20" style="margin-bottom:45px" data-filter=#filter>
+    <thead>
+        <tr>
+            <th>Vessel</th>
+            <th>File Number</th>
+            <th>Eta</th>
+            <th>Company</th>
+            <th data-hide="all">Rfqs</th>
+
+
+            <th class="pull-right"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Files)
+        {
+            <tr>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.VesselName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FileNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Eta)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Company)
+                </td>
+                <td>
+                    <table class="table table-stripped">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Rfq
+                                </th>
+                                <th>
+                                    Stage
+                                </th>
+                                <th>
+                                    Ordered
+                                </th>
+                                <th>
+
+                                </th>
+                                <th>
+
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var rfq in Model.ReferanceNumbers.Where(r => r.FileId == item.Id))
+                            {
+                                <tr>
+                                    <td>
+                                        @rfq.Name
+                                    </td>
+                                    <td>
+                                        @if (rfq.Stage != 0)
+                                        {
+                                            StageList.Stages curr = (StageList.Stages)rfq.Stage;
+
+                                            <strong>@curr.ToString()</strong>
+                                        }
+
+                                    </td>
+                                    <td>
+                                        @rfq.IsOrdered
+                                    </td>
+                                    <td>
+                                        <button class="btn  btn-block btn-danger demo3" id=@rfq.Id onClick="remove(this.id,'Rfq','@rfq.Name')">Remove From List</button>
+                                        @*@Html.ActionLink("Remove", "RemoveRfqFromReport", new { id = rfq.Id }, new { @class = "btn btn-sm btn-danger" })*@
+                                    </td>
+                                    <td>
+                                        @Html.ActionLink("View Rfq", "ViewRfq", "TechnicalLineItem", new { id = rfq.Id }, new { @class = "btn btn-block btn-info", target = "_blank" })
+                                        @*@Html.ActionLink("Remove", "RemoveRfqFromReport", new { id = rfq.Id }, new { @class = "btn btn-sm btn-danger" })*@
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+                </td>
+
+
+                <td class="pull-right">
+
+                    <button class="btn  btn-block btn-danger demo3" id=@item.Id onClick="remove(this.id,'File','@item.FileNumber')">Remove From List</button>
+                    @*@Html.ActionLink("Remove", "RemoveFileFromReport", new { id = item.Id }, new { @class = "btn btn-sm btn-danger" })*@
+                </td>
+            </tr>
+        }
+    </tbody>
+
+    <tfoot>
+        <tr>
+            <td colspan="2">
+                <ul class="pagination pull-right"></ul>
+            </td>
+        </tr>
+    </tfoot>
+</table>
+
+
+<div id="modal-form" class="modal fade" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row">
+
+                    <div class="col-sm-12 b-r">
+                        <label style="font-size:medium" id="description"></label>
+
+                        <h3 class="m-t-none m-b"> Please Fill Removal Reason, That Reason will be added to e-mail notification... </h3>
+
+
+                        <form role="form">
+                            <div class="form-group">
+                                @Html.Hidden("fileorrfq")
+                                @Html.Hidden("removingid")
+
+                                <input type="text" placeholder="Removal Reason" class="form-control" id="removalreason" name="removalreason">
+                                <br />
+
+                            </div>
+                            <div>
+                                <br />
+                                <br />
+                                @*<button class="btn btn-lg btn-primary pull-right m-t-n-xs" type="submit"><strong>Add</strong></button>*@
+
+                                <button class="btn btn-lg btn-primary pull-right m-t-n-xs demo3" onClick="removeAndSendMail();return false">Remove</button>
+                            </div>
+                        </form>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
+    @Styles.Render("~/Content/plugins/chosen/chosenStyles")
+    @Styles.Render("~/plugins/sweetAlertStyles")
+    @Styles.Render("~/plugins/footableStyles")
+}
+
+
+
+@section Scripts {
+
+    @Scripts.Render("~/plugins/dataTables")
+    @Scripts.Render("~/plugins/chosen")
+    @Scripts.Render("~/plugins/sweetAlert")
+    @Scripts.Render("~/plugins/footable")
+
+    <script type="text/javascript">
+
+
+        $(document).ready(function () {
+
+            $('.footable').footable();
+
+
+
+        });
+
+        function remove(clicked_id,object,name) {
+            var removingid = clicked_id;
+            var fileorRfq = object;
+
+
+            document.getElementById("fileorrfq").value = object;
+            document.getElementById("removingid").value = clicked_id;
+
+            document.getElementById("description").innerHTML = "You are Removing a " + object + " " + name;
+
+
+            console.log(object);
+            console.log(clicked_id);
+            $('#modal-form').modal('show');
+
+        }
+
+        function removeAndSendMail() {
+
+            var fileorRfq = document.getElementById("fileorrfq").value;
+            var removingid = document.getElementById("removingid").value;
+            var removalreason = document.getElementById("removalreason").value;
+
+
+          $.ajax({
+                type: "POST",
+                url: '@Url.Action("removeAndSendMail")',
+                data: { 'removingid': removingid, 'fileorRfq': fileorRfq, 'removalreason': removalreason},
+                dataType: "json",
+                traditional: true,
+                success: function (data) {
+                    $('#modal-form').modal('hide');
+                    swal({
+                        title: "Success!",
+                        text: "Removed and Mail Sent, Please Refresh Page to see Updated Table...",
+                        type: "success",
+                        timer: 5000
+                    });
+                },
+                error: function (data) {
+                    console.log('log data error');
+                    swal({
+                        title: "Error!",
+                        text: "Please Control",
+                        type: "error",
+                        timer: 5000
+                    });
+                }
+            });
+
+          $('#modal-form').modal('hide');
+        }
+
+                //$('.chosen-select').chosen({ width: "100%" });
+                //$(document).ready(function () {
+
+                //    $('.dataTables-example').DataTable({
+                //        responsive: {
+                //            details: {
+                //                type: 'column',
+                //                target: 'tr'
+                //            }
+                //        },
+                //        columnDefs: [{
+                //            className: 'control',
+                //            orderable: false,
+                //            targets: 0
+                //        }],
+
+                //        "paging": false,
+                //        dom: '<"html5buttons"B>lTfgitp',
+                //        buttons: [
+                //        ]
+
+                //    });
+
+                //});
+
+
+    </script>
+
+}

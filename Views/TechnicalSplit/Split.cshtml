@@ -1,0 +1,675 @@
+﻿@using System.Data.Entity.Core.Mapping
+@using Appa_MVC.Models
+@using Appa_MVC.Controllers
+@model  SplitOrderModel
+
+@{
+    ViewBag.Title = "Technical Split Order Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+ 
+<div class="ibox">
+    <div class="ibox ">
+
+        <div class="ibox-title">
+            <div class="alert alert-warning" role="alert">
+                File: <strong>@Model.File.FileNumber</strong>
+                <input type="hidden" id="FileId" value="@Model.File.Id" />
+                <p>
+                    Fallowing Rfqs are On <strong> Split Order Stage </strong>  Please Edit Rfqs as Ordered And Click on <strong> Send Mails Button to Go Mailling Page</strong>
+                    <br />
+                    <strong>Information; Buttons on Rfq Items Table </strong>   E is <strong>Edit</strong> Item, A is <strong>Add Alternative or Add New Item</strong>  Item, R is <strong>Remove</strong>  Item.
+
+                    <br />
+                </p> 
+            </div>
+        </div>
+        <div class="ibox-content">
+            @{ Html.RenderAction("UpdateFileDetails", "Technical", new { id = @Model.File.Id }); }
+            @*<div class="ibox-tools">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5> <strong> File Information And Department Notes </strong> </h5>
+                    <a class="collapse-link">
+                        <i class="fa fa-chevron-up"></i>
+                    </a>
+                </div>
+                <div class="ibox-content">
+                    @using (Html.BeginForm())
+                    {
+                        @Html.AntiForgeryToken()
+
+                        <div class="form-horizontal">
+                            @Html.ValidationSummary(true)
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.File.FileNumber, new { @class = "control-label col-md-4" })
+                                    <div class="col-md-8">
+                                        @Html.TextBoxFor(model => model.File.FileNumber, new { @class = "form-control", disabled = "disabled" })
+                                        @Html.ValidationMessageFor(model => model.File.FileNumber)
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.File.Company, new { @class = "control-label col-md-4" })
+                                    <div class="col-md-8">
+                                        @Html.TextBoxFor(model => model.File.Company, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.File.Company)
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.File.Currency, new { @class = "control-label col-md-6" })
+                                    <div class="col-md-6">
+                                        @{
+                                            var currencylist = Enum.GetValues(typeof(CurrencyList.Currencies)).OfType<CurrencyList.Currencies>().Select(m => new { Text = m.ToString(), Value = (int)m }).ToList();
+
+                                            @Html.DropDownListFor(m => m.File.Currency, new SelectList(currencylist, "Value", "Text"), new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.File.Currency)
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.File.Discount, new { @class = "control-label col-md-6" })
+                                    <div class="col-md-6">
+                                        @Html.TextBoxFor(model => model.File.Discount, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.File.Discount)
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.File.DeliveryCost, new { @class = "control-label col-md-6" })
+                                    <div class="col-md-6">
+                                        @Html.TextBoxFor(model => model.File.DeliveryCost, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.File.DeliveryCost)
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.File.DeliveryPlace, new { @class = "control-label col-md-4" })
+                                    <div class="col-md-8">
+                                        @Html.TextBoxFor(model => model.File.DeliveryPlace, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.File.DeliveryPlace)
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.File.PaymentTerm, new { @class = "control-label col-md-4" })
+                                    <div class="col-md-8">
+                                        @Html.TextBoxFor(model => model.File.PaymentTerm, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.File.PaymentTerm)
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.File.Note1, new { @class = "control-label col-md-2" })
+                                    <div class="col-md-10">
+                                        @Html.TextBoxFor(model => model.File.Note1, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.File.Note1)
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.File.Note2, new { @class = "control-label col-md-2" })
+                                    <div class="col-md-10">
+                                        @Html.TextBoxFor(model => model.File.Note2, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.File.Note2)
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.File.Note3, new { @class = "control-label col-md-2" })
+                                    <div class="col-md-10">
+                                        @Html.TextBoxFor(model => model.File.Note3, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.File.Note3)
+                                    </div>
+                                    @Html.HiddenFor(model => model.File.Id)
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="">
+                                    <div class="">
+                                        <input type="submit" value="Update" class="btn btn-danger demo2 btn-block disabled" />
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>*@
+
+            @{
+        foreach (var referanceNumber in Model.ReferanceNumbers)
+        {
+            <div class="ibox-tools">
+                <div class="ibox collapsed">
+                    <div class="ibox-title">
+                        <div class="col-md-9">
+                            <h5>
+                                RFQ: <strong class="text-success"> @referanceNumber.Name </strong> PO Number <strong class="text-info"> @referanceNumber.PONumber </strong>
+
+                                <button id=@referanceNumber.Id class="btn btn-primary btn-sm" onClick="showupdatepomodal(this.id, '@referanceNumber.Name' )"> Update PO Number </button>
+                            </h5>
+                        </div>
+
+                        <div class="col-md-3"> @Html.ActionLink("Edit RFQ ", "EditRfq", new { id = @referanceNumber.Id, querry = Model.Querry }, new { @class = "btn btn-info btn-sm", style = "color: white;" }) </div>
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                    </div>
+                    <div class="ibox-content">
+
+                        <table class="table table-striped dataTables-example" data-page-size="25" id="items" style="width: 100%">
+
+                            <thead>
+                                <tr>
+                                    <th class="hidden"> Id</th>
+                                    <th></th>
+                                    <th></th>
+                                    <th>Number</th>
+                                    <th>Impa</th>
+                                    <th>Description</th>
+                                    <th>Unit</th>
+                                    <th>Qtty</th>
+                                    <th>Price</th>
+                                    <th>A. Qtty</th>
+                                    <th>A. Unit</th>
+                                    <th>A. Price</th>
+                                    <th>Remark</th>
+                                    <th>Wr. Qtty</th>
+                                    <th>S. Name</th>
+                                    <th>S.C. Price</th>
+                                    <th>S. Comment</th>
+                                    <th>S. Price</th>
+                                    <th>Currency</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+
+                                @{
+
+
+                            var lineitems = Model.OrderLineItems.Where(l => l.ReferanceNumberId == referanceNumber.Id).OrderBy(l => l.MasterNumber == "0" ? int.Parse(l.Number) : int.Parse(l.MasterNumber)).ToList();
+
+
+                            foreach (var lineitem in lineitems)
+                            {
+                                <tr>
+                                    <td class="hidden">
+                                        @Html.DisplayFor(modelItem => lineitem.Id)
+                                    </td>
+                                    <th>
+                                        <button class="btn  btn-sm btn-warning demo3" id=@lineitem.Id onClick="show_modal(this.id, '@lineitem.Description' )">A</button>
+                                    </th>
+                                    <th>
+                                        <button class="btn  btn-sm btn-danger demo4" id=@lineitem.Id onClick="remove_item(this.id, '@lineitem.Description' )">R</button>
+                                        @*@Html.ActionLink("R", "Remove", new {id = lineitem.Id, fileid = @ViewBag.FileId}, new {@class = "btn  btn-sm btn-danger", @style = "color:white"})*@
+                                    </th>
+                                    <th>
+                                        @Html.DisplayFor(model => lineitem.Number)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayFor(model => lineitem.Impa)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayFor(model => lineitem.Description)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayFor(model => lineitem.Unit)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayFor(model => lineitem.Qtty)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayFor(model => lineitem.Price)
+                                    </th>
+                                    <th>   @Html.DisplayFor(model => lineitem.AltQtty) </th>
+                                    <th>  @Html.DisplayFor(model => lineitem.AltUnit) </th>
+                                    <th>  @Html.DisplayFor(model => lineitem.AltPrice) </th>
+                                    <th>
+                                        @Html.DisplayFor(model => lineitem.Remark)
+                                    </th>
+                                    <th> @Html.DisplayFor(model => lineitem.WarehouseInfo)</th>
+                                    @*  <th>@Html.Action("GetPriceByWarehouseAndImpa", new { warehouse = "4", impa = lineitem.Impa, fileid = Model.File.Id }) / @Html.Action("GetQttyByWarehouseAndImpa", new { warehouse = "4", impa = lineitem.Impa, fileid = Model.File.Id })  </th>*@
+                                    <th>  @Html.DisplayFor(model => lineitem.SelectedSupplierName) </th>
+                                    <th>@Html.DisplayFor(model => lineitem.SelectedSupplierCalculatedPrice)</th>
+                                    <th>@Html.DisplayFor(model => lineitem.SelectedSupplierRemark)</th>
+                                    <th>@Html.DisplayFor(model => lineitem.SelectedSupplierPrice)</th>
+                                    <th>@Html.DisplayFor(model => lineitem.SelectedSupplierCurrency)</th>
+                                    <th>
+                                        @Html.ActionLink("E", "Edit", new { id = lineitem.Id, fileid = Model.File.Id, querry = Model.Querry }, new { @class = "btn  btn-sm btn-success", @style = "color:white" })
+                                    </th>
+
+                                </tr>
+                    }
+
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="7">
+                                        <ul class="pagination pull-right"></ul>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+
+                    </div>
+
+                    <div class="ibox-footer">
+
+                        @{
+
+                    var rfqtotal = Model.RfqTotals.FirstOrDefault(r => r.RfqId == referanceNumber.Id);
+
+                    <strong>Total: </strong> <span class="text-success font-bold">@rfqtotal.Total </span> <strong> Discount: </strong> <span class="text-danger font-bold"> @rfqtotal.Discount  </span><strong> Grand Total: </strong> <span class="text-info font-bold">@rfqtotal.GrandTotal  </span> <strong> Cost Total:</strong> <span class="text-warning font-bold">@rfqtotal.CostTotal </span> <strong> Antrepo Total:</strong> <span class="text-navy font-bold">@rfqtotal.AntrepoTotal </span>
+                        }
+
+
+                    </div>
+                </div>
+            </div>
+}
+            }
+
+
+            <button class="btn  btn-block btn-info demo3" id=@Model.File.Id onClick="excel(this.id,'@Model.Querry.ToString()'); return false"> Generate Excel For This RFQs </button>
+
+            <br />
+
+            <button class="btn  btn-block btn-info demo3" id=@Model.File.Id onClick="send_mail(this.id,'@Model.Querry.ToString()'); return false"> Send Mail  </button>
+
+
+
+        </div>
+
+    </div>
+</div>
+
+
+<div id="modal-form" class="modal fade" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row">
+
+                    <div class="col-sm-6">
+                        <p style="color:red;font-weight:bold">Is Alternative  <input id="isalternative" name="isalternative" type="checkbox" checked="checked" /> </p>
+                        <br />
+                        <input type="text" placeholder="Number" class="form-control" id="numbermodal" name="numbermodal">
+                        <p class="text-center">
+                            <a href=""><i class="fa fa-plus big-icon"></i></a>
+                        </p>
+                    </div>
+                    <div class="col-sm-6 b-r">
+                        <h3 class="m-t-none m-b"> Please Fill Impa And Description </h3>
+
+                        <form role="form">
+                            <div class="form-group">
+                                @Html.Hidden("lineitemidmodal")
+                                <input type="text" placeholder="Impa" class="form-control" id="impamodal" name="impamodal">
+                                <br />
+                                <input type="text" placeholder="Description" class="form-control" id="descriptionmodal" name="descriptionmodal">
+                                <br />
+                                <div class="col-md-12">
+                                    <div class="col-md-6">
+                                        <input type="text" placeholder="Unit" class="form-control" id="unitmodal" name="unitmodal">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="text" placeholder="Qtty" class="form-control" id="qttymodal" name="qttymodal">
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+                            <div>
+                                <br />
+                                <br />
+                                @*<button class="btn btn-lg btn-primary pull-right m-t-n-xs" type="submit"><strong>Add</strong></button>*@
+
+                                <button class="btn btn-lg btn-primary pull-right m-t-n-xs demo3" onClick="add_alternative();return false">Add</button>
+                            </div>
+                        </form>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="modal-form2" class="modal fade" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row">
+
+                    <div class="col-sm-6"> 
+                        <p class="text-center">
+                            <a href=""><i class="fa fa-edit big-icon"></i></a>
+                        </p>
+                    </div>
+                    <div class="col-sm-6 b-r">
+                        <h3 class="m-t-none m-b"> UPDATE PO NUMBER </h3>
+
+                        <form role="form">
+                            <div class="form-group">
+                                @Html.Hidden("rfqid")
+                                <input type="text" placeholder="rfqname" class="form-control" id="rfqname" name="rfqname" disabled>
+                                <br />
+                                <input type="text" placeholder="PO Number" class="form-control" id="ponumber" name="ponumber">
+                                <br /> 
+
+                            </div>
+                            <div>
+                                <br />
+                                <br /> 
+                                <button class="btn btn-lg btn-primary pull-right m-t-n-xs demo3" onClick="updatepo();return false">Update</button>
+                            </div>
+                        </form>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    @Styles.Render("~/Content/plugins/chosen/chosenStyles")
+    @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
+    @Styles.Render("~/plugins/sweetAlertStyles")
+}
+
+
+@section Scripts {
+    @Scripts.Render("~/plugins/chosen")
+    @Scripts.Render("~/plugins/dataTables")
+    @Scripts.Render("~/plugins/sweetAlert")
+
+<script type="text/javascript">
+        $('.chosen-select').chosen({ width: "100%" });
+
+
+
+        function remove_item(clicked_id,description)
+        {              swal({
+                    title: "You will Delete This Item ",
+                    text:  description,
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "Yes, Delete it!",
+                    cancelButtonText: "No, cancel pls!",
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                },
+                    function (isConfirm) {
+                        if (isConfirm) {
+
+                            console.log(clicked_id);
+                            //swal("Sended!", "Mails are Sending Now...", "success");
+                            $.ajax({
+                                type: "POST",
+                                url: '@Url.Action("Remove")',
+                                data: { 'lineitemid': clicked_id},
+                                dataType: "json",
+                                traditional: true,
+                                success: function (data) {
+                                    swal({
+                                        title: "Success!",
+                                        text: "Item Deleted, You Need To Refresh Page to See Updated Table ...",
+                                        type: "success",
+                                    });
+
+                                },
+                                error: function(data) {
+                                    console.log('log data error');
+                                    swal({
+                                        title: "Error!",
+                                        text: "Error Code : S009X Please Refresh The Page And Try Again.",
+                                        type: "error",
+                                        timer: 5000
+                                    });
+                                }
+                            });
+                        } else {
+                            swal("Cancelled", "You have cancelled :)", "error");
+                        }
+                    });
+        }
+
+        function excel(fileid,querry)
+        {
+            console.log(querry);
+        $.ajax({
+                      type: "POST",
+                      url: '@Url.Action("SplitExcel")',
+                      data: { 'fileid': fileid, 'querry': querry},
+                      dataType: "json",
+                      traditional: true,
+                      success: function (data) {
+                          console.log(data.FileName);
+
+                          window.location = '/Sales/download?filename=' + data.FileName;
+                          swal({
+                              title: "Success!",
+                              text: "RFQs Stages are Set To On Sale Dpt. And an E-mail Have sent to Sale Dpt. & Download will Start Soon.",
+                              type: "success",
+                          });
+
+                      },
+                      error: function(data) {
+                          console.log('log data error');
+                          swal({
+                              title: "Error!",
+                              text: "Error Code : S021X Please Refresh The Page And Try Again.",
+                              type: "error",
+                              timer: 5000
+                          });
+                      }
+                  });
+        }
+
+        function send_mail(fileid,querry)
+        {
+            console.log(querry);
+                     $.ajax({
+                type: "POST",
+                url: '@Url.Action("SendMailButton")',
+                data: { 'fileid': fileid, 'querry': querry },
+                dataType: "json",
+                traditional: true,
+                success: function (data) {
+                   window.location = '/TechnicalSplit/SendMails?ids=' + querry;
+                    // locationhref gelecek
+
+                },
+                error: function(data) {
+                    console.log('log data error');
+                    swal({
+                        title: "Error!",
+                        text: "Error Code : S019X Please Refresh The Page And Try Again.",
+                        type: "error",
+                        timer: 5000
+                    });
+                }
+            });
+        }
+        function show_modal(clicked_id, description)
+        {
+
+            document.getElementById("descriptionmodal").value = description;
+            document.getElementById("lineitemidmodal").value = clicked_id;
+
+            console.log(description);
+            console.log(clicked_id);
+
+            console.log(document.getElementById("lineitemidmodal").value);
+            $('#modal-form').modal('show');
+        }
+
+        function showupdatepomodal(clicked_id, description)
+        {
+            var refid = clicked_id;
+            var refname = description;
+
+            document.getElementById("rfqid").value = refid;
+            document.getElementById("rfqname").value = refname;
+            $('#modal-form2').modal('show');
+        }
+
+
+        function updatepo() {
+            var refid = document.getElementById("rfqid").value;
+            var ponumber = document.getElementById("ponumber").value;
+
+            console.log(ponumber);
+                         $.ajax({
+                                type: "POST",
+                                url: '@Url.Action("UpdatePo")',
+                                data: { 'refid': refid, 'ponumber': ponumber},
+                                dataType: "json",
+                                traditional: true,
+                                success: function (data) {
+                                    swal({
+                                        title: "Success!",
+                                        text: "PO Number Updated, You Need To Refresh Page to See Updated Table ...",
+                                        type: "success"
+                                    });
+
+                                },
+                                error: function(data) {
+                                    console.log('log data error');
+                                    swal({
+                                        title: "Error!",
+                                        text: "Error Code : S019X Please Refresh The Page And Try Again.",
+                                        type: "error",
+                                        timer: 5000
+                                    });
+                                }
+                            });
+
+            $('#modal-form2').modal('hide');
+        }
+
+        function add_alternative()
+        {
+            $('#modal-form').modal('hide');
+            var clicked_id = document.getElementById("lineitemidmodal").value;
+            var description = document.getElementById("descriptionmodal").value;
+            var impa = document.getElementById("impamodal").value;
+            var unit = document.getElementById("unitmodal").value;
+            var qtty = document.getElementById("qttymodal").value;
+            var isalternative = $("#isalternative").is(":checked");
+            var number = document.getElementById("numbermodal").value;
+
+
+            var title1 = "";
+            var title2 = "";
+
+            if (isalternative == true) {
+                title1 = "You will Add Alternatiave to This Item";
+                title2 = "Alternative Item Added, You Need To Refresh Page to See Updated Table ...";
+            } else {
+                title1 = "You will Add New Item";
+                title2 = "New Item Added, You Need To Refresh Page to See Updated Table ...";
+            }
+
+
+            swal({
+                title: title1,
+                    text:  description,
+                    type: "info",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "Yes, Add it!",
+                    cancelButtonText: "No, cancel pls!",
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                },
+                    function (isConfirm) {
+                        if (isConfirm) {
+
+                            console.log(clicked_id);
+                            //swal("Sended!", "Mails are Sending Now...", "success");
+                            $.ajax({
+                                type: "POST",
+                                url: '@Url.Action("Alternative")',
+                                data: { 'lineitemid': clicked_id, 'description': description, 'impa': impa, 'unit': unit, 'qtty': qtty, 'isalternative': isalternative, 'number': number},
+                                dataType: "json",
+                                traditional: true,
+                                success: function (data) {
+                                    swal({
+                                        title: "Success!",
+                                        text: "Alternative Item Added, You Need To Refresh Page to See Updated Table ...",
+                                        type: "success"
+                                    });
+
+                                },
+                                error: function(data) {
+                                    console.log('log data error');
+                                    swal({
+                                        title: "Error!",
+                                        text: "Error Code : S009X Please Refresh The Page And Try Again.",
+                                        type: "error",
+                                        timer: 5000
+                                    });
+                                }
+                            });
+                        } else {
+                            swal("Cancelled", "You have cancelled :)", "error");
+                        }
+                    });
+        }
+
+        $(document).ready(function () {
+
+            $('.dataTables-example').DataTable({
+                "ordering": false,
+                pageLength: 10,
+                dom: '<"html5buttons"B>lTfgitp',
+                buttons: [
+                ]
+
+            });
+
+            $('.dataTables-example2').DataTable({
+
+                pageLength: 10,
+                dom: '<"html5buttons"B>lTfgitp',
+                buttons: [
+                ]
+
+            });
+
+        });
+
+
+
+
+</script>
+}
+

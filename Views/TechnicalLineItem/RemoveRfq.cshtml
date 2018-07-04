@@ -1,0 +1,138 @@
+﻿@model Appa_MVC.Models.ReferanceNumber
+@{
+    ViewBag.Title = "RemoveRfq";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Rfq Name: @Model.Name</h2>
+
+
+
+<div class="form-group">
+    <div class="col-sm-12">
+        <div class="col-sm-3">
+            <select id="vessels" data-placeholder="Choose a Vessel..." class="chosen-select" tabindex="1"></select>
+        </div>
+
+        <div class="col-sm-2">
+            <select id="files" data-placeholder="Choose a File..." class="chosen-select " tabindex="2"></select>
+            @Html.Hidden("RfqId", Model.Id)
+        </div>
+
+        <div class="col-sm-3">
+            <input type="text" placeholder="Rfq Name" class="form-control" id="rfqname" name="rfqname" value='@Model.Name'>
+        </div>
+
+        <div class="col-sm-2">
+            <button id="btnmove" class="btn btn-success btn-md btn-block">Move Rfq</button>
+
+        </div>
+        <div class="col-sm-2">
+            <button id="btnremove" class="btn btn-danger btn-md btn-block">Delete Rfq</button>
+
+        </div>
+      
+    </div>
+</div>
+ 
+
+
+@section Styles {
+    @Styles.Render("~/Content/plugins/chosen/chosenStyles")
+    @Styles.Render("~/plugins/sweetAlertStyles")
+}
+
+
+@section Scripts {
+    @Scripts.Render("~/plugins/chosen")
+    @Scripts.Render("~/plugins/sweetAlert")
+
+    <script type="text/javascript">
+        $('.chosen-select').chosen({ width: "100%" });
+        $(document).ready(function() {
+
+            $('#btnmove').click(function() {
+                console.log('log remove');
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("MoveRfqToFile")',
+                    data: { 'rfqid': $("#RfqId").val(), 'fileid': $("#files").val(), 'name': $("#rfqname").val() },
+                    dataType: "json",
+                    traditional: true,
+                    success: function(data) {
+                        console.log('log data'); 
+                            window.location.href = data;
+                    },
+                    error: function(data) {
+                        console.log('log data error');
+                        swal({
+                            title: "Error!",
+                            text: "Please Select a File",
+                            type: "error",
+                            timer: 5000
+                        });
+                    }
+                });
+            });
+
+            $('#btnremove').click(function() {
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("RemoveRfqFromFile")',
+                    data: { 'rfqid': $("#RfqId").val() },
+                    dataType: "json",
+                    traditional: true,
+                    success: function(data) {
+                        window.location.href = data;
+                    }
+                });
+
+            });
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GetVessels", "Technical")',
+                dataType: 'json',
+                data: {},
+                success: function(vessels) {
+                    $.each(vessels,
+                        function(i, vessel) {
+                            $("#vessels").append(new Option(vessel.Text, vessel.Value));
+
+                        });
+                    $('#vessels').trigger("chosen:updated");
+                },
+                error: function(ex) {
+                    alert('Failed to retrieve Vessels.' + ex);
+                }
+            });
+            return false;
+        });
+
+        $("#vessels").change(function() {
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GetFilesbyVesselId", "Technical")',
+                dataType: 'json',
+                data: { VesselId: $("#vessels").val() },
+                success: function(files) {
+                    $("#files").empty();
+                    $.each(files,
+                        function(i, file) {
+                            $("#files").append(new Option(file.Text, file.Value));
+
+                        });
+                    $('#files').trigger("chosen:updated");
+                },
+                error: function(ex) {
+                    alert('Failed to retrieve Files.' + ex);
+                }
+            });
+            return false;
+
+        });
+
+
+    </script>
+}
+

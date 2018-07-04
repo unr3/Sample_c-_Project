@@ -1,0 +1,328 @@
+﻿@model Inspinia_MVC5_SeedProject.Models.ApproveModel
+
+@{
+    ViewBag.Title = "Approve";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="ibox">
+    <div class="ibox ">
+
+        <div class="ibox-title">
+            <div class="alert alert-warning" role="alert">
+                File: <strong>@ViewBag.FileName</strong> 
+                <input type="hidden" id="FileId" value="@ViewBag.FileId"/>
+                <p>
+                    Fallowing Rfqs are On <strong> Approve Stage </strong>  To Return Editing Items Please Click on <strong>Move to Edit Mode </strong> or To Continue on Setting Price Please Click on <strong> Send Mail Buttons </strong>
+
+                </p>
+            </div>
+        </div>
+        <div class="ibox-content">
+
+            <div class="row">
+
+            </div>
+
+
+
+            <div class="row">
+                <div class="col-md-4">
+                    @*<h3>On Approve Rfq Numbers : and Return Rfq To Edit Button </h3>*@
+                    <table class="table table-striped dataTables-example2">
+                        <thead>
+                            <tr>
+                                <th>Rfq</th>
+                                <th class="pull-right">Move To Edit Mode</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.ReferanceNumbers.ToList())
+                            {
+                                <tr class="text-left">
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Name)
+                                    </td>
+
+                                    <td class="pull-right">
+
+                                        @Html.ActionLink("Move To Edit Mode", "MoveToEdit", new { id = item.Id }, new { @class = "btn btn-sm btn-danger" })
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+
+                        <tfoot>
+                            <tr>
+                                <td colspan="2">
+                                    <ul class="pagination pull-right"></ul>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <div class="col-md-8">
+                    @*<h3>On Approve Rfq Numbers : and Return Rfq To Edit Button </h3>*@
+                    <table class="table table-striped dataTables-example">
+                        <thead>
+                            <tr>
+                                <th>Supplier</th>
+                                <th>Supplier Id</th>
+                                <th>Mail</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Suppliers.ToList())
+                            {
+                                <tr class="text-left">
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.SupplierName)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Id)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Mail)
+                                    </td>
+
+                                    <td >
+
+                                        @Html.ActionLink("Update Mail", "UpdateMail", new { id = item.Id, fileId = @ViewBag.FileId }, new { @class = "btn btn-sm btn-danger" })
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+
+                        <tfoot>
+                            <tr>
+                                <td colspan="2">
+                                    <ul class="pagination pull-right"></ul>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-md-6">
+                    <a data-toggle="modal" role="button" class="btn btn-primary btn-block" href="#modal-form" id="sendselected" tabindex="5" style="width: 100%">Send Mails to Selected Suppliers</a>
+                </div>
+                <div class="col-md-6 pull-right">
+                    <button class="btn btn-danger btn-block demo4" id="btnsendtoall">Send Mails to All Suppliers</button>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<div id="modal-form" class="modal fade " aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-body">
+
+                <div class="row">
+
+                    <div class="col-sm-12">
+                        <div class="row">
+                            <h4>Selected Suppliers</h4>
+                            <ul id="selecteditems"></ul>
+                        </div>
+
+                    </div>
+                    <div class="col-sm-12">
+                        <br>
+                        <div class="row " style="margin-left: 15px">
+                            <button id="btnsendmailstoselected" class="btn btn-primary btn-md btn-block">Send Mails & Approve</button>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    @Styles.Render("~/Content/plugins/chosen/chosenStyles")
+    @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
+    @Styles.Render("~/plugins/sweetAlertStyles")
+}
+
+
+@section Scripts {
+    @Scripts.Render("~/plugins/chosen")
+    @Scripts.Render("~/plugins/dataTables")
+    @Scripts.Render("~/plugins/sweetAlert")
+
+    <script type="text/javascript">
+        $('.chosen-select').chosen({ width: "100%" });
+
+
+        $(window).on('shown.bs.modal', function () {
+            var table = $('.dataTables-example').DataTable();
+            var list = $("#selecteditems");
+            var parent = list.parent();
+
+            var selectedsuppliers = $.map(table.rows('.selected').data(),
+                function (item) {
+                    return item[0];
+                });
+
+            var selectedmails = $.map(table.rows('.selected').data(),
+                function (item) {
+                    return item[2];
+                });
+
+            list.detach().empty().each(function (i) {
+                for (var x = 0; x < selectedsuppliers.length; x++) {
+                    console.log(selectedsuppliers[x]);
+                    $(this).append('<li>' + '<strong>' + selectedsuppliers[x] + '</strong>' + '--' + selectedmails[x] + '</li>');
+                    if (x === selectedsuppliers.length - 1) {
+                        $(this).appendTo(parent);
+                    }
+                }
+            });
+            $('#myModal').modal('show');
+
+        });
+
+
+
+        $(document).ready(function () {
+
+            $('.demo4').click(function () {
+                swal({
+                    title: "Are you sure?",
+                    text: "You will send an E-mail to All Suppliers !",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "Yes, Send it!",
+                    cancelButtonText: "No, cancel pls!",
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                },
+                    function (isConfirm) {
+                        if (isConfirm) {
+                            var table = $('.dataTables-example').DataTable();
+                            
+                            var ids = $.map(table.rows().data(),
+                                function(item) {
+                                    return item[1];
+                                });
+                            console.log(ids);
+                            //swal("Sended!", "Mails are Sending Now...", "success");
+                            $.ajax({
+                                type: "POST",
+                                url: '@Url.Action("SendMails")',
+                                data: { 'supplierids': ids, 'fileId': $("#FileId").val() ,'allsuppliers':ids},
+                                dataType: "json",
+                                traditional: true,
+                                success: function (data) {
+                                    $('#modal-form').modal('hide');
+                                    swal({
+                                        title: "Success!",
+                                        text: "Mails Are Sending ...",
+                                        type: "success"
+                                    });
+                                    document.getElementById("sendselected").classList.add('disabled');
+                                    document.getElementById("sendselected").innerHTML = 'Mails are Sending (Send Mails To Selected Suppliers)';
+                                    document.getElementById("btnsendtoall").classList.add('disabled');
+                                    document.getElementById("btnsendtoall").innerHTML = 'Mails are Sending (Send Mails To All Suppliers)';
+                                },
+                                error: function(data) {
+                                    console.log('log data error');
+                                    swal({
+                                        title: "Error!",
+                                        text: "Error Code : S009X Please Refresh The Page And Try Again.",
+                                        type: "error",
+                                        timer: 5000
+                                    });
+                                }
+                            });
+                        } else {
+                            swal("Cancelled", "You have cancelled :)", "error");
+                        }
+                    });
+            });
+
+
+            $('.dataTables-example').DataTable({
+                select: {
+                    style: 'multi'
+                },
+                pageLength: 10,
+                dom: '<"html5buttons"B>lTfgitp',
+                buttons: [
+                ]
+
+            });
+
+            $('.dataTables-example2').DataTable({
+                select: {
+                    style: 'multi'
+                },
+                pageLength: 10,
+                dom: '<"html5buttons"B>lTfgitp',
+                buttons: [
+                ]
+
+            });
+
+        });
+
+        $('#btnsendmailstoselected').click(function() {
+            var table = $('.dataTables-example').DataTable();
+
+            var ids = $.map(table.rows('.selected').data(),
+                function(item) {
+                    return item[1];
+                });
+            var allids = $.map(table.rows().data(),
+                function(item) {
+                    return item[1];
+                });
+           
+  
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("SendMails")',
+                data: { 'supplierids': ids, 'fileId': $("#FileId").val(), 'allsuppliers': allids },
+                dataType: "json",
+                traditional: true,
+                success: function (data) {
+                    $('#modal-form').modal('hide');
+                    swal({
+                        title: "Success!",
+                        text: "Mails Are Sending ...",
+                        type: "success"
+                    });
+                    document.getElementById("sendselected").classList.add('disabled');
+                    document.getElementById("sendselected").innerHTML = 'Mails are Sending (Send Mails To Selected Suppliers)';
+                    document.getElementById("btnsendtoall").classList.add('disabled');
+                    document.getElementById("btnsendtoall").innerHTML = 'Mails are Sending (Send Mails To All Suppliers)';
+                },
+                error: function(data) {
+                    console.log('log data error');
+                    swal({
+                        title: "Error!",
+                        text: "Error Code : S009X Please Refresh The Page And Try Again.",
+                        type: "error",
+                        timer: 5000
+                    });
+                }
+            });
+
+        });
+
+
+    </script>
+}

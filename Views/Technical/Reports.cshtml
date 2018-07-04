@@ -1,0 +1,103 @@
+﻿@using Appa_MVC.Models
+@model  IEnumerable<FileMasterDetailsViewModel>
+
+@{
+    ViewBag.Title = "Technical Reports";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@if (Request.IsAuthenticated && (User.IsInRole("Manager") || User.IsInRole("Admin")))
+{
+    <div class="row wrapper border-bottom white-bg page-heading">
+
+        <div class="ibox">
+
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h2> Not Priced RFQs </h2>
+                </div>
+
+                <div class="ibox-content">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-8">
+                        <table class="table table-striped dataTables-example">
+                            <thead>
+                                <tr>
+                                    <th class="hidden">RFQ ID</th>
+                                    <th>Vessel</th>
+                                    <th>File Nr.</th>
+                                    <th>Rfq</th>
+                                    <th>Stage</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.ToList())
+                                {
+                                    <tr>
+                                        <td class="hidden">
+                                            @Html.DisplayFor(modelItem => item.RFQId)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Vessel)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.File)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Rfq)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Stage)
+                                        </td>
+                                        <td>
+                                            @Html.ActionLink("Remove From List", "RemoveFromReport", new { id = item.RFQId }, new { @class = "btn btn-primary", id = @item.RFQId })
+                                        </td>
+
+                                    </tr>
+                                }
+                            </tbody> 
+  
+                        </table>
+                    </div>
+             
+                </div>
+
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <h2 class="text-center">You can not View This Page</h2>
+}
+
+@section Styles {
+    @Styles.Render("~/Content/plugins/chosen/chosenStyles")
+    @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
+    @Styles.Render("~/plugins/sweetAlertStyles")
+}
+
+@section Scripts {
+    @Scripts.Render("~/plugins/chosen")
+    @Scripts.Render("~/plugins/dataTables")
+    @Scripts.Render("~/plugins/sweetAlert")
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $('.dataTables-example').DataTable({
+                "ordering": false,
+                "paging": false,
+                select: {
+                    style: 'single'
+                },
+                pageLength: 10,
+                dom: '<"html5buttons"B>lTfgitp',
+                buttons: [
+                ]
+
+            });
+        });
+    </script>
+}

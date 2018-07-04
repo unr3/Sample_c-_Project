@@ -1,0 +1,96 @@
+﻿@model Appa_MVC.Models.LineItem
+@{
+    ViewBag.Title = "Delete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+        <h2>Delete</h2>
+        <ol class="breadcrumb">
+            <li>
+                @Html.ActionLink("Line Items", "Index", new { id = (int)ViewBag.RfqId })
+            </li>
+            <li class="active">
+                <strong>Delete</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-sm-8">
+        <div class="title-action">
+            @Html.ActionLink("Back to List", "Index", new { id = (int)ViewBag.RfqId }, new { @class = "btn btn-primary" })
+        </div>
+    </div>
+</div>
+
+
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>Delete an Item</h5>
+                </div>
+                <div class="ibox-content">
+
+                    @using (Html.BeginForm())
+                    {
+                        @Html.AntiForgeryToken()
+
+                        <div class="form-horizontal">
+                            @Html.ValidationSummary(true)
+                            <div class="form-group"  >
+                                @Html.LabelFor(model => model.Number, new { @class = "control-label col-md-2" })
+                                <div class="col-md-10 disabled">
+                                    @Html.TextBoxFor(model => model.Number, new { @class = "form-control", disabled = "readonly" })
+                                    @Html.ValidationMessageFor(model => model.Number)
+                                    
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Impa, new { @class = "control-label col-md-2"})
+                                <div class="col-md-10">
+                                    @Html.TextBoxFor(model => model.Impa, new { @class = "form-control", disabled = "disabled" })
+                                    @Html.ValidationMessageFor(model => model.Impa)
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Description, new { @class = "control-label col-md-2" })
+                                <div class="col-md-10">
+                                    @Html.TextBoxFor(model => model.Description, new { @class = "form-control", disabled = "disabled" })
+                                    @Html.ValidationMessageFor(model => model.Description)
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Unit, new { @class = "control-label col-md-2" })
+                                <div class="col-md-10">
+                                    @Html.TextBoxFor(model => model.Unit, new { @class = "form-control", disabled = "disabled" })
+                                    @Html.ValidationMessageFor(model => model.Unit)
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Qtty, new { @class = "control-label col-md-2" })
+                                <div class="col-md-10">
+                                    @Html.TextBoxFor(model => model.Qtty, new { @class = "form-control", disabled = "disabled" })
+                                    @Html.ValidationMessageFor(model => model.Qtty)
+                                </div>
+                                @Html.Hidden("ReferanceNumberId", (int)ViewBag.RfqId)
+                                @*  <input type="hidden" name="ReferanceNumberId" id="ReferanceNumberId" value="@ViewBag.RfqId" />*@
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-offset-2 col-md-10">
+                                    <div class="pull-right">
+                                        <input type="submit" value="Delete" class="btn btn-danger demo2" />
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

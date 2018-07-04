@@ -1,0 +1,84 @@
+﻿@using Appa_MVC.Models;
+
+@model  List<ApplicationUser>
+@{
+    ViewBag.Title = "EditUser";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>EditUser</h2>
+
+
+
+<select id="users" name="users">
+    @{
+        foreach (var u in Model)
+        {
+            <option value=@u.Id.ToString()> @u.UserName.ToString()  </option>
+        }
+    }
+</select>
+
+<input id="newpassword" name="newpassword" />
+
+<button id="change" name="change" onClick="changepsw();return false"> change psw</button>
+
+
+@section Styles {
+    @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
+    @Styles.Render("~/Content/plugins/chosen/chosenStyles")
+    @Styles.Render("~/plugins/sweetAlertStyles")
+}
+
+
+
+@section Scripts {
+
+    @Scripts.Render("~/plugins/dataTables")
+    @Scripts.Render("~/plugins/chosen")
+    @Scripts.Render("~/plugins/sweetAlert")
+
+
+    <script type="text/javascript">
+
+        function changepsw() {
+
+            console.log($("#users").val());
+            console.log($("#newpassword").val());
+
+            var userid = $("#users").val();
+            var psw = $("#newpassword").val();
+
+
+                   $.ajax({
+                                type: "POST",
+                                url: '@Url.Action("ChangePSW")',
+                                data: { 'userid': userid, 'psw': psw},
+                                dataType: "json",
+                                traditional: true,
+                                success: function (data) {
+                                    swal({
+                                        title: "Success!",
+                                        text: "PSW CHANGED...",
+                                        type: "success"
+                                    });
+
+                                },
+                                error: function(data) {
+                                    console.log('log data error');
+                                    swal({
+                                        title: "Error!",
+                                        text: "Error Code : S009X Please Refresh The Page And Try Again.",
+                                        type: "error",
+                                        timer: 5000
+                                    });
+                                }
+                            });
+
+        }
+    </script>
+
+
+}
+
+

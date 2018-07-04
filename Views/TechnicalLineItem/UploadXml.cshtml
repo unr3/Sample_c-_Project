@@ -1,0 +1,50 @@
+﻿
+@{
+    ViewBag.Title = "UploadXml";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+ 
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox">
+            <div class="ibox-title">
+                <h5>Upload Vship's Xml to Rfq</h5>
+            </div>
+            <div class="ibox-content">
+              <form action="~/TechnicalLineItem/SaveUploadedFile" class="dropzone" id="dropzoneForm">
+                    <div class="fallback">
+                        <input name="file" type="file" multiple />
+                    </div>
+                </form>
+            </div>
+            
+   
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    @Styles.Render("~/Content/plugins/dropzone/dropZoneStyles")
+}
+
+@section Scripts {
+    @Scripts.Render("~/plugins/dropZone")
+
+    <script type="text/javascript">
+        //Dropzone.options.dropzoneForm = {
+        //    paramName: "file", // The name that will be used to transfer the file
+        //    maxFilesize: 2, // MB
+        //    dictDefaultMessage: "<strong>Drop files here or click to upload. </strong></br> (This is just a demo dropzone. Selected files are not actually uploaded.)"
+        //};
+
+        Dropzone.options.dropzoneForm = {
+            init: function () {
+                this.on("complete", function (data) {
+                    //var res = eval('(' + data.xhr.responseText + ')');
+                    var res = JSON.parse(data.xhr.responseText);
+                });
+            }
+        };
+    </script>
+}

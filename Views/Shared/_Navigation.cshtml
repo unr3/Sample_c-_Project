@@ -1,0 +1,75 @@
+﻿@using Appa_MVC.Helpers
+<nav class="navbar-default navbar-static-side" role="navigation">
+    <div class="sidebar-collapse">
+        <ul class="nav" id="side-menu">
+            <li class="nav-header">
+                <div class="dropdown profile-element">
+                    <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                        <span class="clear">
+                            <span class="block m-t-xs">
+                                <strong class="font-bold">APPA</strong>
+                            </span> <span class="text-muted text-xs block">Main Menu <b class="caret"></b></span>
+                        </span>
+                    </a>
+                    <ul class="dropdown-menu animated fadeInRight m-t-xs">
+                        <li><a href="#">Logout</a></li>
+                    </ul>
+                </div>
+                <div class="logo-element">
+                    Appa
+                </div>
+            </li>
+            <li class="@Html.IsSelected(action: "Index")">
+                <a href="@Url.Action("Index", "Home")"><i class="fa fa-laptop"></i> <span class="nav-label">Main page</span> </a>
+            </li>
+            <li class="@Html.IsSelected(action: "Minor")">
+                <a href="@Url.Action("Index", "File")"><i class="fa fa-file"></i> <span class="nav-label">New File</span></a>
+            </li>
+            @if (Request.IsAuthenticated && (User.IsInRole("Technical") || User.IsInRole("Admin") || User.IsInRole("Manager") || User.IsInRole("SaleManager") ))
+            {
+        <li class="@Html.IsSelected(action: "Minor")">
+            <a href="@Url.Action("Index", "Technical")"><i class="fa fa-cogs"></i> <span class="nav-label">Technical</span></a>
+        </li>
+        <li class="@Html.IsSelected(action: "Minor")">
+            <a href="@Url.Action("Index", "Document")"><i class="fa fa-folder-open"></i> <span class="nav-label">Documents</span></a>
+        </li>
+        <li class="@Html.IsSelected(action: "Minor")">
+            <a href="@Url.Action("Index", "sales")"><i class="fa fa-shopping-cart"></i> <span class="nav-label">Sales</span></a>
+        </li>
+}
+
+            @if (Request.IsAuthenticated && (User.IsInRole("Manager") || User.IsInRole("Admin") || User.IsInRole("SaleManager") || (User.IsInRole("Technical"))))
+            {
+        <li class="@Html.IsSelected(action: "Minor")">
+            <a href="@Url.Action("SaleReport", "sales")"><i class="fa fa-balance-scale"></i> <span class="nav-label">Sale Report</span></a>
+        </li>
+            }
+
+            <li class="@Html.IsSelected(action: "Minor")">
+                <a href="@Url.Action("Index", "Currency")"><i class="fa fa-money"></i> <span class="nav-label">Currency</span></a>
+            </li>
+            @if (Request.IsAuthenticated && (User.IsInRole("Catering") || User.IsInRole("Admin")))
+    {
+        <li class="@Html.IsSelected(action: "Minor")">
+            <a href="@Url.Action("Index", "Garrets")"><i class="fa fa-folder"></i> <span class="nav-label">Garrets</span></a>
+        </li>
+}
+
+            @if (Request.IsAuthenticated && (User.IsInRole("Manager") || User.IsInRole("Admin") || (User.IsInRole("Technical"))))
+    {
+
+        <li class="@Html.IsSelected(action: "Minor")">
+            <a href="@Url.Action("Reports", "Technical")"><i class="fa fa-briefcase"></i> <span class="nav-label">Reports</span></a>
+        </li>
+        <li class="@Html.IsSelected(action: "Minor")">
+            <a href="@Url.Action("DilovasiMizan", "Technical")"><i class="fa fa-address-book"></i> <span class="nav-label">Dilovası Mizan</span></a>
+        </li>
+
+        <li class="@Html.IsSelected(action: "Minor")">
+            <a href="@Url.Action("AntrepoMizan", "Technical")"><i class="fa fa-anchor"></i> <span class="nav-label">Antrepo Mizan</span></a>
+        </li>
+}
+
+        </ul>
+    </div>
+</nav>

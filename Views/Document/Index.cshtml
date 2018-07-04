@@ -1,0 +1,253 @@
+﻿
+@{
+    ViewBag.Title = "Document Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="ibox wrapper wrapper-content animated fadeInRight white-bg page-heading">
+
+    <div class="ibox">
+
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h2>Create Document</h2>
+            </div>
+
+            <div class="ibox-content">
+                <div class="form-group">
+                    <div class="col-sm-12">
+                        <div class="col-sm-12">
+                            <div class="col-sm-3">
+                                <select id="vessels" data-placeholder="Choose a Vessel..." class="chosen-select" tabindex="1"></select>
+                            </div>
+
+                            <div class="col-sm-2">
+                                <select id="files" data-placeholder="Choose a File..." class="chosen-select" tabindex="2"></select>
+                            </div>
+
+                        </div>
+                    </div>
+
+
+
+
+
+                    <br />
+
+                    <div class="row" style="margin-top:30px; background-color:white">
+
+
+                        <div class="col-md-6">
+                            <table id="example" class="table table-striped  dataTables-rfq" width="100%"></table>
+                        </div>
+                        <div class="col-md-6 hidden" id="divbuttons" style="margin-top: 25px;">
+                            <div class="col-md-6" style="margin-top:20px">
+                                <button class="btn  btn-block btn-info demo3" id="btndelivery"> Generate Delivery Note</button>
+                                <br />
+                                <button class="btn  btn-block btn-success demo3 disabled" id="4" disabled> Generate Receipt</button>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@section Styles {
+    @Styles.Render("~/Content/plugins/chosen/chosenStyles")
+    @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
+    @Styles.Render("~/plugins/sweetAlertStyles")
+}
+
+
+@section Scripts {
+    @Scripts.Render("~/plugins/chosen")
+    @Scripts.Render("~/plugins/dataTables")
+    @Scripts.Render("~/plugins/sweetAlert")
+
+    <script type="text/javascript">
+        $('.chosen-select').chosen({ width: "100%" });
+        $(document).ready(function() {
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GetVessels","Technical")',
+                dataType: 'json',
+                data: {},
+                success: function(vessels) {
+                    $.each(vessels,
+                        function(i, vessel) {
+                            $("#vessels").append(new Option(vessel.Text, vessel.Value));
+
+                        });
+                    $('#vessels').trigger("chosen:updated");
+                },
+                error: function(ex) {
+                    alert('Failed to retrieve Vessels.' + ex);
+                }
+            });
+            return false;
+        });
+
+        $("#vessels").change(function() {
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GetFilesbyVesselId","Technical")',
+                dataType: 'json',
+                data: { VesselId: $("#vessels").val() },
+                success: function(files) {
+                    $("#files").empty();
+
+                    $.each(files,
+                        function(i, file) {
+                            $("#files").append(new Option(file.Text, file.Value));
+
+                        });
+                    $('#files').trigger("chosen:updated");
+
+                },
+                error: function(ex) {
+                    alert('Failed to retrieve Files.' + ex);
+                }
+            });
+            return false;
+
+        });
+
+        var dataSet = [];
+        $("#files").change(function() {
+                 //table için gerekli değerler
+              $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GetRfqsbyFileId")',
+                dataType: 'json',
+                data: { FileId: $("#files").val()},
+                success: function (rfqs) {
+                    console.log('rfqdetailfileid =' + $("#files").val());
+                    dataSet = [];
+                    $.each(rfqs,
+                        function (i, rfq) {
+                            console.log(rfq);
+                            var dts = [rfq.RfqName, rfq.PoNumber, rfq.Stage, rfq.Count, rfq.RfqId];
+                            dataSet.push(dts);
+
+                        });
+
+
+                    $('#example').DataTable({
+                        select: {
+                            style: 'multi'
+                        },
+                        data: dataSet,
+                        columns: [
+                            { title: "RFQ Name" },
+                            { title: "PO Name" },
+                            { title: "Stage" },
+                            { title: "Item Count" },
+                            { title: "Id" }
+                        ],
+                        paging: false,
+                        searching: false,
+                        destroy: true,
+
+                    });
+
+                    document.getElementById("divbuttons").classList.remove('hidden');
+
+
+                },
+                error: function(ex) {
+                    alert('Failed to retrieve RfqDetails.' + ex);
+                }
+            });
+            return false;
+
+        });
+
+
+            $('#btndelivery').click(function () {
+
+                        swal({
+                    title: "Are you sure?",
+                    text: "You will Generate Delivery Note For Selected Rfqs !",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "Yes, Generate it!",
+                    cancelButtonText: "No, cancel pls!",
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                },
+                    function (isConfirm) {
+                        if (isConfirm) {
+
+                            var table = $('.dataTables-rfq').DataTable();
+
+                            var ids = $.map(table.rows('.selected').data(),
+                                function (item) {
+                                    return item[4];
+                                });
+
+                            console.log(ids);
+                             $.ajax({
+                                        type: "POST",
+                                        url: '@Url.Action("DeliveryNote")',
+                                        data: { 'rfqids': ids },
+                                        dataType: "json",
+                                        traditional: true,
+                                        success: function (data) {
+                                            console.log(data.FileName);
+
+                                            window.location = '/Document/download?filename=' + data.FileName;
+
+                                            swal({
+                                                title: "Success!",
+                                                text: "File have been generated and Download will start soon, if there is an error please contact with bkardas@adamarine.com",
+                                                type: "success",
+                                                timer: 5000
+                                            });
+                                        },
+                                        error: function (data) {
+                                            console.log(data);
+                                    console.log('log data error');
+                                    swal({
+                                        title: "Error!",
+                                        text: "Error Code : S009X Please Refresh The Page And Try Again.",
+                                        type: "error",
+                                        timer: 5000
+                                    });
+                                }
+                            });
+                        } else {
+                            swal("Cancelled", "You have cancelled :)", "error");
+                        }
+                    });
+        });
+
+
+    </script>
+}
+
+
+
+
+

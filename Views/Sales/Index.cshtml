@@ -1,0 +1,137 @@
+﻿
+@{
+    ViewBag.Title = "Sales Department Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Sales Department</h2>
+
+
+<div class="col-sm-12">
+    <div class="col-sm-3">
+        <select id="vessels" data-placeholder="Choose a Vessel..." class="chosen-select" tabindex="1"></select>
+    </div>
+    <div class="col-sm-2">
+        <select id="files" data-placeholder="Choose a File..." class="chosen-select" tabindex="2"></select>
+    </div>
+
+    <div class="col-sm-2">
+
+        <button id="selectlink" class="btn btn-primary disabled"> Select File </button>
+    </div>
+    <div class="col-sm-3">
+        &nbsp;
+    </div>
+</div>
+
+@section Styles {
+    @Styles.Render("~/Content/plugins/chosen/chosenStyles")
+    @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
+    @Styles.Render("~/plugins/sweetAlertStyles")
+}
+
+
+@section Scripts {
+    @Scripts.Render("~/plugins/chosen")
+    @Scripts.Render("~/plugins/dataTables")
+    @Scripts.Render("~/plugins/sweetAlert")
+
+    <script type="text/javascript">
+
+    $('.chosen-select').chosen({ width: "100%" });
+
+        $(document).ready(function() {
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GetVessels")',
+                dataType: 'json',
+                data: {},
+                success: function(vessels) {
+                    $.each(vessels,
+                        function(i, vessel) {
+                            $("#vessels").append(new Option(vessel.Text, vessel.Value));
+
+                        });
+                    $('#vessels').trigger("chosen:updated");
+                },
+                error: function(ex) {
+                    alert('Failed to retrieve Vessels.' + ex);
+                }
+            });
+            return false;
+    });
+
+          $("#vessels").change(function() {
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GetFilesbyVesselId")',
+                dataType: 'json',
+                data: { VesselId: $("#vessels").val() },
+                success: function(files) {
+                    $("#files").empty();
+
+
+                    $.each(files,
+                        function(i, file) {
+                            $("#files").append(new Option(file.Text, file.Value));
+
+                        });
+                    $('#files').trigger("chosen:updated");
+
+                },
+                error: function(ex) {
+                    alert('Failed to retrieve Files.' + ex);
+                }
+            });
+            return false;
+
+        });
+
+          $("#files").change(function () {
+              var refval = $("#files").val();
+              var sel = document.getElementById("files");
+              if (refval !== 0) {
+                  document.getElementById("selectlink").classList.remove('disabled');
+                  //+ sel.options[sel.selectedIndex].text
+              }
+              if (refval === '0') {
+                  alert("Please Select A File To Continue");
+                  document.getElementById("selectlink").classList.add('disabled');
+                  document.getElementById("addrfq").classList.add('disabled');
+              }
+
+          });
+
+
+          $('#selectlink').click(function () {
+
+              var fileid = $("#files").val();
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("SelectFile")',
+                data: { 'fileid': fileid },
+                dataType: "json", 
+                success: function (data) {
+                    console.log("su");
+                     window.location.href = data;
+                },
+                error: function () {
+                    console.log("err");
+                    //console.log('log data error');
+                    //console.log(fileid);
+                    //swal({
+                    //    title: "Error!",
+                    //    text: "Please Control",
+                    //    type: "error",
+                    //    timer: 5000
+                    //});
+                }
+            });
+            
+            return true;
+        });
+    </script>
+
+
+}

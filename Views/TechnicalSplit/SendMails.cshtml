@@ -1,0 +1,880 @@
+﻿@using Appa_MVC.Models
+
+@model TechnicalSplitSendMailViewModel
+
+@{
+    ViewBag.Title = "Split Order Send Mails";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<div class="ibox wrapper wrapper-content animated fadeInRight white-bg page-heading">
+    <div class="ibox-tools">
+        <div class="ibox">
+            <div class="">
+                <div class="alert text-center">
+                    <p>
+                        You Could Send Mails To Suppliers for Referance on this Page. (Items on revision have Yellow Background )
+                        <strong>If you got an unexpected error please take a screenshot and send to bkardas@adamarine.com </strong>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="ibox">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>Suppliers And Selected RFQs  MAIL GONDERME MAIL LIST EKSIK  </h5>
+                <a class="collapse-link">
+                    <i class="fa fa-chevron-up"></i>
+                </a>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="col-lg-2 text-right">
+                            <h5>Update Supplier's City</h5>
+                        </div>
+                        <div class="col-lg-4">
+                            <select id="supplier" data-placeholder="supplier" class="chosen-select" tabindex="1" name="supplier">
+                                <option value="999">Please Choose</option>
+                                @foreach (var item in Model.LineItemSuppliers)
+                            {
+                                <option id=@item.SupplierId value=@item.SupplierId>@item.SupplierName</option>
+                        }
+                            </select>
+                        </div>
+                        <div class="col-lg-3">
+                            <select id="city" data-placeholder="city" class="chosen-select" tabindex="2" name="city" required>
+                                <option value="999">Please Choose</option>
+                                <option value="34">Istanbul</option>
+                                <option value="35">Izmir</option>
+                                <option value="31">Iskenderun</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-3">
+                            <button class="btn  btn-block btn-info demo3" id="btnupdatecity" onClick="updatecity(); return false"> Update  </button>
+                        </div>
+                    </div>
+                    <div class="col-md-6" style="margin-top:25px">
+                        <h3>Suppliers And Cities</h3>
+                        <table class="table table-striped dataTables-example">
+                            <thead>
+                                <tr>
+                                    <th>Supplier</th>
+                                    <th>Supplier Id</th>
+                                    <th>City</th>
+                                    <th>E Mail</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.LineItemSuppliers)
+                            {
+                                <tr class=" @(item.City==0 ? "danger" : "")">
+
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.SupplierName)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.SupplierId)
+                                    </td>
+                                    <td>
+                                        @if (item.City != 0)
+                                    {
+                                        CityList.Cities curr = (CityList.Cities)item.City;
+
+                                        @curr.ToString();
+                                }
+
+                                    </td>
+                                         <td>
+                                        @Html.DisplayFor(modelItem => item.Email)
+                                    </td>
+
+
+                                </tr>
+                        }
+                            </tbody>
+
+                            <tfoot>
+                                <tr>
+                                    <td colspan="2">
+                                        <ul class="pagination pull-right"></ul>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    @*<div class="col-md-6" style="margin-top: 25px;">
+                                            <h3>Selected RFQs</h3>
+                                            <table class="table table-striped dataTables-example">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Rfq Number</th>
+                                                        <th>PO Number</th>
+                                                        <th>Mail Send Before ?</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var item in Model.ReferanceNumbers)
+                                    {
+                                        <tr class=" @(item.IsSplitted==true ? "info" : "")">
+
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Name)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.PONumber)
+                                            </td>
+                                            <td>
+                                                @(item.IsSplitted == true ? "YES" : "NO")
+                                            </td>
+                                        </tr>
+                    }
+                                                </tbody>
+
+                                                <tfoot>
+                                                    <tr>
+                                                        <td colspan="2">
+                                                            <ul class="pagination pull-right"></ul>
+                                                        </td>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                        </div>*@
+                    <div class="col-md-6">
+                        <div class="col-md-12">
+                            <h2 class="text-center text-info">Mail Sent Before ?</h2>
+                            <h5 class="text-center text-danger">* You need to Refresh Page To See Updated Table After Sending an E-Mail...</h5>
+                            <table class="table table-striped dataTables-example">
+                                <thead>
+                                    <tr>
+                                        <th>Supplier Name / WareHouse / Office  </th>
+                                        <th>Mail Sent Before ?</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.RfqMailLogs)
+                                {
+                                    <tr class=" @(item.MailSent==true.ToString() ? "info" : "")">
+
+                                        <td>
+                                            @item.Name
+                                        </td>
+                                        <td>
+                                            @item.MailSent
+                                        </td>
+
+                                    </tr>
+                            }
+                                </tbody>
+
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="2">
+                                            <ul class="pagination pull-right"></ul>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+
+        </div>
+
+        @{ if (Model.SelectedWarehouses.Count > 0)
+        {
+            <h2 class="text-center text-info">Selected Suppliers' Items</h2>
+    }
+        }
+
+        @{
+        foreach (var item in Model.LineItemSuppliers)
+        {
+            <div class="ibox-tools">
+                <div class="ibox collapsed">
+                    <div class="ibox-title">
+                        <h5>
+                            @{
+                            CityList.Cities curr = (CityList.Cities)item.City;
+                            }
+
+                            @item.SupplierName /   @(@item.City == 0 ? "PLEASE SELECT CITY FOR THIS SUPPLIER" : curr.ToString())
+                        </h5>
+
+
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                    </div>
+                    <div class="ibox-content">
+                        @{
+
+                            <table class="table table-striped dataTables-example" data-page-size="25" id="items" style="width: 100%">
+
+                                <thead>
+                                    <tr>
+                                        <th class="hidden"> Id</th>
+                                        <th>RFQ</th>
+                                        <th>Number</th>
+                                        <th>Impa</th>
+                                        <th>Description</th>
+                                        <th>Unit</th>
+                                        <th>Qtty</th>
+                                        <th>Price</th>
+                                        <th>A. Qtty</th>
+                                        <th>A. Unit</th>
+                                        <th>A. Price</th>
+                                        <th>Remark</th>
+                                        <th>S.C. Price</th>
+                                        <th>S. Comment</th>
+                                        <th>S. Price</th>
+                                        <th>Currency</th>
+
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+
+
+                                    @{
+
+
+                                    var lineitems = Model.OrderLineItems.Where(o => o.SelectedSupplierId == item.SupplierId).OrderBy(l => l.MasterNumber == "0" ? int.Parse(l.Number) : int.Parse(l.MasterNumber)).ToList();
+
+
+                                    foreach (var lineitem in lineitems)
+                                    {
+                                        <tr class=" @(lineitem.OnRevision == true ? "warning" : "")">
+                                            <td class="hidden">
+                                                @Html.DisplayFor(modelItem => lineitem.Id)
+                                            </td>
+                                            <th>
+                                                @Html.DisplayFor(model => lineitem.ReferanceNumber.Name)
+                                            </th>
+
+                                            <th>
+                                                @Html.DisplayFor(model => lineitem.Number)
+                                            </th>
+                                            <th>
+                                                @Html.DisplayFor(model => lineitem.Impa)
+                                            </th>
+                                            <th>
+                                                @Html.DisplayFor(model => lineitem.Description)
+                                            </th>
+                                            <th>
+                                                @Html.DisplayFor(model => lineitem.Unit)
+                                            </th>
+                                            <th>
+                                                @Html.DisplayFor(model => lineitem.Qtty)
+                                            </th>
+                                            <th>
+                                                @Html.DisplayFor(model => lineitem.Price)
+                                            </th>
+                                            <th>   @Html.DisplayFor(model => lineitem.AltQtty) </th>
+                                            <th>  @Html.DisplayFor(model => lineitem.AltUnit) </th>
+                                            <th>  @Html.DisplayFor(model => lineitem.AltPrice) </th>
+                                            <th>
+                                                @Html.DisplayFor(model => lineitem.Remark)
+                                            </th>
+
+                                            <th>@Html.DisplayFor(model => lineitem.SelectedSupplierCalculatedPrice)</th>
+                                            <th>@Html.DisplayFor(model => lineitem.SelectedSupplierRemark)</th>
+                                            <th>@Html.DisplayFor(model => lineitem.SelectedSupplierPrice)</th>
+                                            <th>@Html.DisplayFor(model => lineitem.SelectedSupplierCurrency)</th>
+
+
+                                        </tr>
+                                }
+
+                                    }
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="7">
+                                            <ul class="pagination pull-right"></ul>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+
+
+                        }
+
+
+                       
+                        @{
+                            var noteid = "note" + item.SupplierId;
+                            var emailid= "email" + item.SupplierId;
+                        }
+                        <div class="">
+                            <div class="form-group">
+                                @Html.Label("Note", new { @class = "control-label col-md-1" })
+                                <div class="col-md-11">
+                                    <input type="text" placeholder="Note" class="form-control" id=@noteid name=@noteid>
+                                </div>
+                            </div>
+                         
+                        </div>
+                           
+                        <div class="col-md-6 form-horizontal" style="margin-top:1%">
+                            <div class="form-group">
+                                @Html.Label("E-Mail", new { @class = "control-label col-md-2" })
+                                <div class="col-md-10">
+                                    <input type="text" placeholder="E-Mail" class="form-control" value=@item.Email id=@emailid name=@emailid>
+                                </div>
+                            </div> 
+                        </div>
+                        <div class="col-md-6" style="margin-top:1%">
+                            <button class="btn  btn-block btn-info demo3" id=@item.SupplierId onClick="send_mail_toSupplier(this.id,'@Model.Querry.ToString()'); return false"> Send Mail  </button>
+                        </div>
+
+                        <br />
+
+                    </div>
+                </div>
+            </div>
+    }
+
+
+        }
+
+
+
+        @{ if (Model.SelectedWarehouses.Count > 0)
+        {
+            <h2 class="text-center text-info">Selected WareHouses' Items</h2>
+    }
+        }
+
+
+        @{
+        foreach (var item in Model.SelectedWarehouses)
+        {
+            <div class="ibox-tools">
+                <div class="ibox collapsed">
+                    <div class="ibox-title">
+                        <h5>
+                            @item.SupplierName
+                        </h5>
+
+
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                    </div>
+                    <div class="ibox-content">
+                        @{
+
+                            <table class="table table-striped dataTables-example" data-page-size="25" id="items" style="width: 100%">
+
+                                <thead>
+                                    <tr>
+                                        <th class="hidden"> Id</th>
+                                        <th>RFQ</th>
+                                        <th>Number</th>
+                                        <th>Impa</th>
+                                        <th>Description</th>
+                                        <th>Unit</th>
+                                        <th>Qtty</th>
+                                        <th>Price</th>
+                                        <th>A. Qtty</th>
+                                        <th>A. Unit</th>
+                                        <th>A. Price</th>
+                                        <th>Remark</th>
+                                        <th>S.C. Price</th>
+                                        <th>S. Comment</th>
+                                        <th>S. Price</th>
+                                        <th>Currency</th>
+
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+
+
+                                    @{
+
+
+                                    var lineitems = Model.OrderLineItems.Where(o => o.SelectedSupplierId == item.SupplierId).OrderBy(l => l.MasterNumber == "0" ? int.Parse(l.Number) : int.Parse(l.MasterNumber)).ToList();
+
+
+                                    foreach (var lineitem in lineitems)
+                                    {
+                                        <tr class=" @(lineitem.OnRevision==true ? "warning" : "")">
+                                            <td class="hidden">
+                                                @Html.DisplayFor(modelItem => lineitem.Id)
+                                            </td>
+                                            <th>
+                                                @Html.DisplayFor(model => lineitem.ReferanceNumber.Name)
+                                            </th>
+
+                                            <th>
+                                                @Html.DisplayFor(model => lineitem.Number)
+                                            </th>
+                                            <th>
+                                                @Html.DisplayFor(model => lineitem.Impa)
+                                            </th>
+                                            <th>
+                                                @Html.DisplayFor(model => lineitem.Description)
+                                            </th>
+                                            <th>
+                                                @Html.DisplayFor(model => lineitem.Unit)
+                                            </th>
+                                            <th>
+                                                @Html.DisplayFor(model => lineitem.Qtty)
+                                            </th>
+                                            <th>
+                                                @Html.DisplayFor(model => lineitem.Price)
+                                            </th>
+                                            <th>   @Html.DisplayFor(model => lineitem.AltQtty) </th>
+                                            <th>  @Html.DisplayFor(model => lineitem.AltUnit) </th>
+                                            <th>  @Html.DisplayFor(model => lineitem.AltPrice) </th>
+                                            <th>
+                                                @Html.DisplayFor(model => lineitem.Remark)
+                                            </th>
+
+                                            <th>@Html.DisplayFor(model => lineitem.SelectedSupplierCalculatedPrice)</th>
+                                            <th>@Html.DisplayFor(model => lineitem.SelectedSupplierRemark)</th>
+                                            <th>@Html.DisplayFor(model => lineitem.SelectedSupplierPrice)</th>
+                                            <th>@Html.DisplayFor(model => lineitem.SelectedSupplierCurrency)</th>
+
+
+                                        </tr>
+                                }
+
+                                    }
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="7">
+                                            <ul class="pagination pull-right"></ul>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+
+
+                        }
+
+
+                        <br />
+
+                        @{
+                        var noteid = "note" + item.SupplierId;
+                        }
+                         
+                           <div class="form-horizontal col-md-6 form-group">
+                                @Html.Label("Note", new { @class = "control-label col-md-1" })
+                                <div class="col-md-11">
+                                    <input type="text" placeholder="Note" class="form-control" id=@noteid name=@noteid>
+                                </div>
+                            </div> 
+                        <div class="col-md-6">
+                            <button class="btn  btn-block btn-success demo3" id=@item.SupplierId onClick="send_mail_toWarehouse(this.id,'@Model.Querry.ToString()'); return false"> Send Mail To @item.SupplierName  </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+    }
+
+
+        }
+
+        @{
+            var cities = Model.LineItemSuppliers.Where(x => x.City != 0).GroupBy(x => x.City)
+              .Select(g => new
+              {
+                  g.FirstOrDefault().City
+              })
+             .ToList();
+
+
+
+            foreach (var city in cities)
+            {
+            <h2 class="text-center text-info">
+                @{
+
+                    int curid = city.City;
+                    CityList.Cities curr = (CityList.Cities)curid;
+
+                <strong>@curr.ToString() Suppliers</strong>
+
+
+                }
+            </h2>
+
+                    var suppliersincity = Model.LineItemSuppliers.Where(s => s.City == city.City).GroupBy(x => x.SupplierId)
+                    .Select(g => new Supplier
+                    {
+                        Id = g.FirstOrDefault().SupplierId
+                    })
+                    .ToList();
+
+                    List<string> supids = new List<string>();
+
+                    foreach (var supid in suppliersincity)
+                    {
+                        supids.Add(supid.Id);
+                    }
+
+                    var items = Model.OrderLineItems.Where(p => supids.Contains(p.SelectedSupplierId)).OrderBy(l => l.MasterNumber == "0" ? int.Parse(l.Number) : int.Parse(l.MasterNumber)).ToList();
+
+            <div class="ibox" style="padding-bottom: 3%;">
+                <table class="table table-striped dataTables-example" data-page-size="25" id="items" style="width: 100%">
+
+                    <thead>
+                        <tr>
+                            <th class="hidden"> Id</th>
+                            <th>RFQ</th>
+                            <th>Number</th>
+                            <th>Impa</th>
+                            <th>Description</th>
+                            <th>Unit</th>
+                            <th>Qtty</th>
+                            <th>Price</th>
+                            <th>A. Qtty</th>
+                            <th>A. Unit</th>
+                            <th>A. Price</th>
+                            <th>Remark</th>
+                            <th>S. Name</th>
+                            <th>S.C. Price</th>
+                            <th>S. Comment</th>
+                            <th>S. Price</th>
+                            <th>Currency</th>
+
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+
+                        @{
+
+
+                foreach (var lineitem in items)
+                {
+                    <tr class=" @(lineitem.OnRevision == true ? "warning" : "")">
+                        <td class="hidden">
+                            @Html.DisplayFor(modelItem => lineitem.Id)
+                        </td>
+                        <th>
+                            @Html.DisplayFor(model => lineitem.ReferanceNumber.Name)
+                        </th>
+
+                        <th>
+                            @Html.DisplayFor(model => lineitem.Number)
+                        </th>
+                        <th>
+                            @Html.DisplayFor(model => lineitem.Impa)
+                        </th>
+                        <th>
+                            @Html.DisplayFor(model => lineitem.Description)
+                        </th>
+                        <th>
+                            @Html.DisplayFor(model => lineitem.Unit)
+                        </th>
+                        <th>
+                            @Html.DisplayFor(model => lineitem.Qtty)
+                        </th>
+                        <th>
+                            @Html.DisplayFor(model => lineitem.Price)
+                        </th>
+                        <th>   @Html.DisplayFor(model => lineitem.AltQtty) </th>
+                        <th>  @Html.DisplayFor(model => lineitem.AltUnit) </th>
+                        <th>  @Html.DisplayFor(model => lineitem.AltPrice) </th>
+                        <th>
+                            @Html.DisplayFor(model => lineitem.Remark)
+                        </th>
+                        <th>
+                            @Html.DisplayFor(model => lineitem.SelectedSupplierName)
+                        </th>
+
+                        <th>@Html.DisplayFor(model => lineitem.SelectedSupplierCalculatedPrice)</th>
+                        <th>@Html.DisplayFor(model => lineitem.SelectedSupplierRemark)</th>
+                        <th>@Html.DisplayFor(model => lineitem.SelectedSupplierPrice)</th>
+                        <th>@Html.DisplayFor(model => lineitem.SelectedSupplierCurrency)</th>
+
+
+                    </tr>
+    }
+
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="7">
+                                <ul class="pagination pull-right"></ul>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+
+
+                @{var noteid = "note" + city.City;
+                }
+
+                <div class="form-horizontal col-md-6 form-group">
+                    @Html.Label("Note", new { @class = "control-label col-md-1" })
+                    <div class="col-md-11">
+                        <input type="text" placeholder="Note" class="form-control" id=@noteid name=@noteid>
+                    </div>
+                </div>
+                <div class="col-md-1">
+
+                    <div class="checkbox m-r-xs @(city.City == 34 ? "" : "hidden")">
+                        <input type="checkbox" id="checkbox1">
+                        <label for="checkbox1">
+                            Shipyards
+                        </label>
+                    </div>
+
+                </div>
+                <div class="col-md-5">
+                    <button class="btn  btn-block btn-warning demo3" id=@city.City onClick="send_mail_toCity(this.id,'@Model.Querry.ToString()'); return false"> Send Mail To @curr.ToString() Office  </button>
+                </div>
+
+
+                <br />
+            </div>
+ 
+}
+        }
+
+
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+            @section Styles {
+                @Styles.Render("~/Content/plugins/chosen/chosenStyles")
+                @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
+                @Styles.Render("~/plugins/sweetAlertStyles")
+            }
+
+
+            @section Scripts {
+                @Scripts.Render("~/plugins/chosen")
+                @Scripts.Render("~/plugins/dataTables")
+                @Scripts.Render("~/plugins/sweetAlert")
+
+
+<script type="text/javascript">
+
+        $('.chosen-select').chosen({ width: "100%" });
+
+        $(document).ready(function () {
+            $('.dataTables-example').DataTable({
+                "paging": false,
+                select: {
+                    style: 'multi'
+                },
+                pageLength: 7,
+                dom: '<"html5buttons"B>lTfgitp',
+                buttons: [
+                    //{ extend: 'copy' },
+                    //{ extend: 'csv' },
+                    {
+                        extend: 'excel',
+                        title: 'AppaGeneratedExcel',
+                        exportOptions: {
+
+                        }
+                    },
+                    {
+                        extend: 'pdf',
+                        title: 'AppaGeneratedPdf',
+                        exportOptions: {
+
+                        }
+                    },
+                    {
+                        extend: 'print',
+
+                        customize: function (win) {
+                            $(win.document.body).addClass('white-bg');
+                            $(win.document.body).css('font-size', '10px');
+
+                            $(win.document.body).find('table')
+                                .addClass('compact')
+                                .css('font-size', 'inherit');
+                        }
+                    }
+                ]
+
+            });
+        });
+
+                    function send_mail_tosupplier(supplierid, selectedrfqids) {
+                        console.log(supplierid);
+                        console.log(selectedrfqids);
+
+                    }
+
+    function updatecity() {
+
+        var supplier = $("#supplier").val();
+        var city = $("#city").val();
+
+        console.log(supplier);
+        console.log(city);
+        var sPageURL = window.location.href;
+           $.ajax({
+                type: "POST",
+                url: '@Url.Action("UpdateCity")',
+                data: { 'supplier': supplier, 'city': city },
+                dataType: "json",
+                traditional: true,
+                success: function (data) {
+
+                    window.location = sPageURL;
+                    // locationhref gelecek
+
+                },
+                error: function(data) {
+                    console.log('log data error');
+                    swal({
+                        title: "Error!",
+                        text: "Error Code : S019X Please Refresh The Page And Try Again.",
+                        type: "error",
+                        timer: 5000
+                    });
+                }
+            });
+
+                    }
+
+     function send_mail_toCity(cityid, querry) {
+                        console.log(cityid);
+                        console.log(querry);
+
+                        var note = $("#note" + cityid).val();
+                        console.log(note);
+                        var shipyards = document.getElementById('checkbox1').checked; 
+
+                $.ajax({
+                type: "POST",
+                url: '@Url.Action("Send_mail_toCity")',
+                data: { 'cityid': cityid, 'querry': querry, 'note': note, 'shipyards': shipyards },
+                dataType: "json",
+                traditional: true,
+                success: function (data) {
+                    swal({
+                        title: "Success!",
+                        text: "Mail Sent, Please Refresh Page to see Updated Tables",
+                        type: "success",
+                        timer: 5000
+                    });
+
+                },
+                error: function(data) {
+                    console.log('log data error');
+                    swal({
+                        title: "Error!",
+                        text: "Error Code : S019X Please Refresh The Page And Try Again.",
+                        type: "error",
+                        timer: 5000
+                    });
+                }
+            });
+
+
+    }
+
+                     function send_mail_toWarehouse(warehouseid, querry) {
+                         console.log(warehouseid);
+                         console.log(querry);
+                         var note = $("#note" + warehouseid).val();
+                         console.log(note);
+
+                        
+
+                $.ajax({
+                type: "POST",
+                url: '@Url.Action("send_mail_toWarehouse")',
+                data: { 'warehouseid': warehouseid, 'querry': querry, 'note': note },
+                dataType: "json",
+                traditional: true,
+                success: function (data) {
+                    swal({
+                        title: "Success!",
+                        text: "Mail Sent, Please Refresh Page to see Updated Tables",
+                        type: "success",
+                        timer: 5000
+                    });
+
+                },
+                error: function(data) {
+                    console.log('log data error');
+                    swal({
+                        title: "Error!",
+                        text: "Error Code : S019X Please Refresh The Page And Try Again.",
+                        type: "error",
+                        timer: 5000
+                    });
+                }
+            });
+
+
+     }
+
+
+         function send_mail_toSupplier(supplierid, querry) {
+             console.log(supplierid);
+              console.log(querry);
+                 
+              var note = $("#note" + supplierid).val();
+              var email = $("#email" + supplierid).val();
+              console.log(note);
+
+                $.ajax({
+                type: "POST",
+                url: '@Url.Action("Send_mail_toSuppliere")',
+                data: { 'suppliereid': supplierid, 'querry': querry, 'note': note, 'email': email },
+                dataType: "json",
+                traditional: true,
+                success: function (data) {
+                    swal({
+                        title: "Success!",
+                        text: "Mail Sent, Please Refresh Page to see Updated Tables",
+                        type: "success",
+                        timer: 5000
+                    });
+
+                },
+                error: function(data) {
+                    console.log('log data error');
+                    swal({
+                        title: "Error!",
+                        text: "Error Code : S019X Please Refresh The Page And Try Again.",
+                        type: "error",
+                        timer: 5000
+                    });
+                }
+            });
+
+
+                    }
+
+
+</script>
+            }

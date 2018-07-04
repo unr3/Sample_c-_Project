@@ -1,0 +1,256 @@
+﻿@model Appa_MVC.Models.SupplierPriceLineItem
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_LayoutSupplier.cshtml";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+        <h2>Edit</h2>
+        <ol class="breadcrumb">
+            <li>
+                @Html.ActionLink("Kalemler", "Offer", new { id = (string)ViewBag.OfferId })
+            </li>
+            <li class="active">
+                <strong>Edit</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-sm-8">
+        <div class="title-action">
+            @Html.ActionLink("Listeye Geri Dön", "Offer", new { id = (string)ViewBag.OfferId }, new { @class = "btn btn-primary" })
+        </div>
+    </div>
+</div>
+
+
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>Fiyat Ver / Güncelle</h5>
+                </div>
+                <div class="ibox-content">
+
+                    @using (Html.BeginForm())
+                    {
+                        @Html.AntiForgeryToken()
+
+                    <div class="form-horizontal">
+                        @Html.ValidationSummary(true)
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.LineItem.Impa, new { @class = "control-label col-md-2" })
+                            <div class="col-md-10 disabled">
+                                @Html.TextBoxFor(model => model.LineItem.Impa, new { @class = "form-control", disabled = "readonly" })
+                                @Html.ValidationMessageFor(model => model.LineItem.Impa)
+
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.LineItem.Description, new { @class = "control-label col-md-2" })
+                            <div class="col-md-10 disabled">
+                                @Html.TextBoxFor(model => model.LineItem.Description, new { @class = "form-control", disabled = "readonly" })
+                                @Html.ValidationMessageFor(model => model.LineItem.Description)
+
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.LineItem.Unit, new { @class = "control-label col-md-2" })
+                            <div class="col-md-10 disabled">
+                                @Html.TextBoxFor(model => model.LineItem.Unit, new { @class = "form-control", disabled = "readonly" })
+                                @Html.ValidationMessageFor(model => model.LineItem.Unit)
+
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.LineItem.Qtty, new { @class = "control-label col-md-2" })
+                            <div class="col-md-10 disabled">
+                                @Html.TextBoxFor(model => model.LineItem.Qtty, new { @class = "form-control", disabled = "readonly" })
+                                @Html.ValidationMessageFor(model => model.LineItem.Qtty)
+
+                            </div>
+                        </div>
+                        @{
+                            if (Model.IsOldPrice)
+                            {
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.OldPriceDate, new { @class = "control-label col-md-2" })
+                                    <div class="col-md-10 disabled">
+                                        @Html.TextBoxFor(model => model.OldPriceDate ,new { @class = "form-control", disabled = "readonly" })
+                                        @Html.ValidationMessageFor(model => model.OldPriceDate)
+
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.UpdateDate, new { @class = "control-label col-md-2" })
+                                    <div class="col-md-10 disabled">
+                                        @Html.TextBoxFor(model => model.UpdateDate, new { @class = "form-control", disabled = "readonly" })
+                                        @Html.ValidationMessageFor(model => model.UpdateDate)
+
+                                    </div>
+                                </div>
+                            }
+                        }
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.SupplierPrice, new { @class = "control-label col-md-2" })
+                            <div class="col-md-10" tabindex="2">
+                                @Html.TextBoxFor(model => model.SupplierPrice, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.SupplierPrice)
+
+                                @Html.Hidden("id", Model.Id)
+                                @Html.Hidden("OfferMasterId", Model.OfferMasterId)
+                                @*@Html.Hidden("Vat")
+                                @Html.Hidden("Currency")*@
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Vat, new { @class = "control-label col-md-2" })
+                            @Html.ValidationMessageFor(model => model.Vat)
+                            <div class="col-md-10">
+                                <select id="Vat" data-placeholder="KDV Oranı" class="chosen-select" tabindex="3" name="Vat" required>
+                                    @if (Model.Vat == 0)
+                                    {
+                                        <option value="">Lütfen Seçiniz</option>
+                                        <option>1</option>
+                                        <option>8</option>
+                                        <option>12</option>
+                                        <option >18</option>
+                                            
+                                    }
+                                    else
+                                    {
+                                        <option>@Model.Vat</option>
+                                       List<int> liste= new List<int>();
+                                        liste.Add(1);
+                                        liste.Add(8);
+                                        liste.Add(12);
+                                        liste.Add(18);
+                                        liste.Remove((int)Model.Vat);
+
+                                        foreach (var i in liste)
+                                        {
+                                            <option >@i</option>
+                                        }
+                                    } 
+ 
+                     
+                                </select>
+                            </div>
+       
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Currency, new { @class = "control-label col-md-2" })
+                            @Html.ValidationMessageFor(model => model.Currency)
+                            <div class="col-md-10">
+                                <select id="Currency" data-placeholder="Döviz" class="chosen-select col-md-10" tabindex="4" name="Currency" required>
+                               
+                                        @if (Model.Currency == null)
+                                        {
+                                            <option value="">Lütfen Seçiniz</option>
+                                            <option>TL</option>
+                                            <option>USD</option>
+                                            <option>EURO</option>
+                                            
+                                        }
+                                        else
+                                        {
+                                            
+
+                                            <option>@Model.Currency</option>
+                                            List<string> liste= new List<string>();
+                                            liste.Add("USD");
+                                            liste.Add("EURO");
+                                            liste.Add("TL");
+                                           
+                                            liste.Remove(Model.Currency);
+
+                                            foreach (var i in liste)
+                                            {
+                                                <option >@i</option>
+                                            }
+                                        } 
+                                   
+                                
+                                </select>
+                            </div>
+         
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Comment, new { @class = "control-label col-md-2" })
+                            <div class="col-md-10" tabindex="5" >
+                                @Html.TextBoxFor(model => model.Comment, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.Comment)
+                                
+                          
+                            </div>
+                        </div>
+                         <div class="form-group">
+                            @Html.LabelFor(model => model.TurkishDescription, new { @class = "control-label col-md-2" })
+                            <div class="col-md-10" tabindex="5" >
+                                @Html.TextBoxFor(model => model.TurkishDescription, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.TurkishDescription)
+                                
+                          
+                            </div>
+                        </div>
+
+
+                         
+ 
+                        <div class="form-group">
+                            <div class="col-md-12">
+                               
+                            </div>
+                            <div class="col-md-offset-2 col-md-10">
+                                <div class="pull-right">
+                                    <h4 style="color:red">Lütfen KDV ve Döviz Türü Seçimini Yapmayı unutmayınız...</h4>
+                                    <input type="submit" value="Fiyat Ver / Güncelle" class="btn btn-warning demo2 btn-block"/>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    @Styles.Render("~/Content/plugins/chosen/chosenStyles") 
+}
+
+  
+@section Scripts {
+    @Scripts.Render("~/plugins/chosen")
+
+    <script type="text/javascript">
+        $('.chosen-select').chosen({ width: "100%" });
+   
+        $.validator.setDefaults({ ignore: ":hidden:not(.chosen-select)" });
+
+        $(document).ready(function () {
+      
+        });
+       
+
+        //$("#Kdv").change(function() {
+        //    var vatvalue = $("#Kdv").val();
+        //    document.getElementById("Vat").value = vatvalue;
+
+        //});
+
+        //$("#Doviz").change(function() {
+        //    var kdvvalue = $("#Doviz").val();
+        //    document.getElementById("Currency").value = kdvvalue;
+
+        //});
+    </script>
+
+}
